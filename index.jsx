@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react')
-var Field = require('./src')
+var Button = require('./src')
 
 require('./index.styl')
 
@@ -13,8 +13,6 @@ var App = React.createClass({
         VALUE = value
         this.setState({})
     },
-
-
 
     render: function() {
 
@@ -30,7 +28,8 @@ var App = React.createClass({
 
         return (
             <div className="App" style={{padding: 10}}>
-                <Field name="AAA" placeholder="test" clearTool={true} validate={validate} style={style} value={VALUE} onChange={this.onChange}/>
+                <Button overClassName="over">hello
+                </Button>
             </div>
         )
     }
