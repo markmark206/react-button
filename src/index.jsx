@@ -7,6 +7,6 @@ module.exports = React.createClass({
     displayName: 'ReactButton',
 
     render: function(){
-        return React.createElement("div", null, "button")
+        return <div>button</div>
     }
 })
