@@ -3,8 +3,8 @@ module.exports = {
     output: {
         path         : __dirname + '/dist',
         libraryTarget: 'umd',
-        library      : 'ReactInputField',
-        filename     : 'react-input-field.js'
+        library      : 'ReactButton',
+        filename     : 'react-button.js'
     },
     module: {
         loaders: require('./loaders.config')

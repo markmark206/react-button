@@ -20,16 +20,19 @@ var App = React.createClass({
             width: '50%'
         }
 
-        function validate(value){
-            return value + '' !== ''
+        function fn(value){
+            console.log('clicked')
         }
 
         // <Field placeholder="x" style={style} label='First Name' value={VALUE} onChange={this.onChange}/>
 
         return (
             <div className="App" style={{padding: 10}}>
-                <Button overClassName="over">hello
+                <input placeholder="X"/>
+                <Button focusedClassName="focused" focusedStyle={{color: 'black'}} activeStyle={{position: 'relative', top: 1}} style={{color: 'red', padding: 50}} overStyle={{color: 'magenta'}} overClassName="over" activeClassName="active" fn={fn}>
+                    hello
                 </Button>
+                <Button overClassName="over" href="#test">world</Button>
             </div>
         )
     }
