@@ -1,0 +1,25 @@
+{
+  "name": "react-button",
+  "version": "0.1.0",
+  "description": "React Button",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/radubrehar/react-button.git"
+  },
+  "keywords": [
+    "button",
+    "react-component",
+    "react",
+    "ui"
+  ],
+  "author": "Radu Brehar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/radubrehar/react-button/issues"
+  },
+  "homepage": "https://github.com/radubrehar/react-button"
+}
