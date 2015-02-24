@@ -24,15 +24,19 @@ var App = React.createClass({
             console.log('clicked')
         }
 
+        function clicked(){
+        }
+
         // <Field placeholder="x" style={style} label='First Name' value={VALUE} onChange={this.onChange}/>
 
         return (
             <div className="App" style={{padding: 10}}>
-                <input placeholder="X"/>
-                <Button focusedClassName="focused" focusedStyle={{color: 'black'}} activeStyle={{position: 'relative', top: 1}} style={{color: 'red', padding: 50}} overStyle={{color: 'magenta'}} overClassName="over" activeClassName="active" fn={fn}>
+                <Button onClick={clicked}>
                     hello
                 </Button>
-                <Button overClassName="over" href="#test">world</Button>
+
+                <Button>world</Button>
+                <Button>me</Button>
             </div>
         )
     }

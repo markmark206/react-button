@@ -2,6 +2,7 @@
 
 var React  = require('react')
 var assign = require('object-assign')
+var normalize = require('react-style-normalizer')
 
 function emptyFn(){}
 
@@ -27,13 +28,28 @@ module.exports = React.createClass({
 
     getDefaultProps: function() {
         return {
+            color: 'rgb(120, 120, 120)',
+            overColor: 'white',
             defaultStyle: {
                 display  : 'inline-block',
                 boxSizing: 'border-box',
                 padding  : 5,
-                border   : '1px solid gray',
-                color    : 'blue',
+                margin   : 3,
+                border   : '1px solid rgb(218, 218, 218)',
                 cursor   : 'pointer'
+            },
+
+            defaultOverStyle: {
+                background: 'rgb(103, 175, 233)'
+            },
+
+            defaultDisabledStyle: {
+                background: 'rgb(221, 221, 221)',
+                color: 'rgb(128, 128, 128)',
+                cursor: 'default'
+            },
+            defaultDisabledAnchorStyle: {
+                cursor: 'default'
             },
 
             defaultAnchorStyle: {
@@ -53,10 +69,17 @@ module.exports = React.createClass({
 
     render: function(){
         var props         = this.prepareProps(this.props, this.state)
-        var anchorFactory = props.anchorFactory || React.DOM.a
+
+        var defaultAnchorFactory = React.DOM.a
+        var anchorFactory        = props.anchorFactory || defaultAnchorFactory
+        var anchor               = anchorFactory(props.anchorProps)
+
+        if (anchor === undefined){
+            anchor = defaultAnchorFactory(props.anchorProps)
+        }
 
         return <div {...props}>
-            {anchorFactory(props.anchorProps)}
+            {anchor}
         </div>
     },
 
@@ -67,17 +90,22 @@ module.exports = React.createClass({
         assign(props, thisProps)
 
         props.active    = !!state.active
-        props.mouseOver = !!state.mouseOver
+        props.mouseOver = props.overState == null? !!state.mouseOver: props.overState
         props.focused = !!state.focused
 
         props.style     = this.prepareStyle(props, state)
         props.className = this.prepareClassName(props, state)
 
-        props.onMouseOver = this.handleMouseOver.bind(this, props)
-        props.onMouseOut  = this.handleMouseOut.bind(this, props)
+        props.onMouseEnter = this.handleMouseEnter.bind(this, props)
+        props.onMouseLeave  = this.handleMouseLeave.bind(this, props)
         props.onMouseDown = this.handleMouseDown.bind(this, props)
         props.onMouseUp   = this.handleMouseUp.bind(this, props)
-        props.onClick     = this.handleClick.bind(this, props)
+
+        var handleClick = this.handleClick.bind(this, props)
+
+        props.onClick = typeof props.interceptClick == 'function'?
+                            props.interceptClick.bind(this, handleClick):
+                            handleClick
 
         props.anchorProps = this.prepareAnchorProps(props)
 
@@ -95,28 +123,78 @@ module.exports = React.createClass({
 
         anchorProps.onClick = this.handleAnchorClick.bind(this, props)
         anchorProps.onFocus = this.handleAnchorFocus.bind(this, props)
-        anchorProps.onBlur = this.handleAnchorBlur.bind(this, props)
+        anchorProps.onBlur  = this.handleAnchorBlur.bind(this, props)
 
         return anchorProps
     },
 
+    getActiveColorStyle: function(props){
+        var style
+
+        if (props.active && props.activeColor){
+            style = { color: props.activeColor }
+        }
+
+        return style
+    },
+
+    getOverColorStyle: function(props){
+        var style
+
+        if (props.mouseOver && props.overColor){
+            style = { color: props.overColor }
+        }
+
+        return style
+    },
+
+    getFocusedColorStyle: function(props){
+        var style
+
+        if (props.focused && props.focusedColor){
+            style = { color: props.focusedColor }
+        }
+
+        return style
+    },
+
+    getDisabledColorStyle: function(props){
+        var style
+
+        if (props.disabled && props.disabledColor){
+            style = { color: props.disabledColor }
+        }
+
+        return style
+    },
+
+    getColorStyle: function(props){
+        var style
+
+        if (props.color){
+            style = { color: props.color }
+        }
+
+        return style
+    },
+
     prepareAnchorStyle: function(props) {
-        var colorStyle = props.style.color?
-                            {color: props.style.color }:
-                            null
+        var style = assign({}, props.defaultAnchorStyle, this.getColorStyle(props), props.anchorStyle)
 
-        var style = assign({}, props.defaultAnchorStyle, colorStyle, props.anchorStyle)
-
-        if (props.mouseOver && props.overAnchorStyle){
-            assign(style, props.overAnchorStyle)
+        if (props.mouseOver){
+            assign(style, props.defaultOverAnchorStyle, this.getOverColorStyle(props), props.overAnchorStyle)
         }
 
-        if (props.active && props.activeAnchorStyle){
-            assign(style, props.activeAnchorStyle)
+        if (props.active){
+            assign(style, props.defaultActiveAnchorStyle, this.getActiveColorStyle(props), props.activeAnchorStyle)
         }
 
-        if (props.focused && props.focusedAnchorStyle){
-            assign(style, props.focusedAnchorStyle)
+        if (props.focused){
+            assign(style, props.defaultFocusedAnchorStyle, this.getFocusedColorStyle(props), props.focusedAnchorStyle)
+        }
+
+        if (props.disabled){
+            assign(style, props.defaultDisabledAnchorStyle, this.getDisabledColorStyle(props), props.disabledAnchorStyle)
         }
 
         return style
@@ -140,27 +218,35 @@ module.exports = React.createClass({
             className += ' ' + props.focusedClassName
         }
 
+        if (props.disabled && props.disabledClassName){
+            className += ' ' + props.disabledClassName
+        }
+
         return className
     },
 
     prepareStyle: function(props) {
         var style = {}
 
-        assign(style, props.defaultStyle, props.style)
+        assign(style, props.defaultStyle, this.getColorStyle(props), props.style)
 
-        if (props.focused && props.focusedStyle){
-            assign(style, props.focusedStyle)
+        if (props.focused){
+            assign(style, props.defaultFocusedStyle, this.getFocusedColorStyle(props), props.focusedStyle)
         }
 
-        if (props.mouseOver && props.overStyle){
-            assign(style, props.overStyle)
+        if (props.mouseOver){
+            assign(style, props.defaultOverStyle, this.getOverColorStyle(props), props.overStyle)
         }
 
-        if (props.active && props.activeStyle){
-            assign(style, props.activeStyle)
+        if (props.active){
+            assign(style, props.defaultActiveStyle, this.getActiveColorStyle(props), props.activeStyle)
         }
 
-        return style
+        if (props.disabled){
+            assign(style, props.defaultDisabledStyle, this.getDisabledColorStyle(props), props.disabledStyle)
+        }
+
+        return normalize(style)
     },
 
     navigate: function(props) {
@@ -174,12 +260,20 @@ module.exports = React.createClass({
     },
 
     handleAnchorFocus: function(props, event) {
+        if (props.disabled){
+            return
+        }
+
         this.setState({
             focused: true
         })
     },
 
     handleAnchorBlur: function(props, event) {
+        if (props.disabled){
+            return
+        }
+
         this.setState({
             focused: false
         })
@@ -192,24 +286,40 @@ module.exports = React.createClass({
     },
 
     handleClick: function(props, event) {
+        if (props.disabled){
+            return
+        }
+
         if (props.href && (event.target && event.target.tagName !== 'A')){
             this.navigate(props)
         }
 
         ;(this.props.onClick || emptyFn)(event)
-        ;(this.props.fn || emptyFn)()
+        ;(this.props.fn || emptyFn)(props, event)
     },
 
-    handleMouseOver: function(props, event) {
+    handleMouseEnter: function(props, event) {
+        if (props.disabled){
+            return
+        }
+
         this.setState({
             mouseOver: true
         })
+
+        ;(this.props.onMouseEnter || emptyFn)(event)
     },
 
-    handleMouseOut: function(props, event) {
+    handleMouseLeave: function(props, event) {
+        if (props.disabled){
+            return
+        }
+
         this.setState({
             mouseOver: false
         })
+
+        ;(this.props.onMouseLeave || emptyFn)(event)
     },
 
     handleMouseUp: function(props, event) {
@@ -219,17 +329,24 @@ module.exports = React.createClass({
 
         window.removeEventListener('mouseup', this.handleMouseUp)
 
+        ;(this.props.onMouseUp || emptyFn)(event)
     },
 
     handleMouseDown: function(props, event) {
 
         event.preventDefault()
 
+        if (props.disabled){
+            return
+        }
+
         this.setState({
             active: true
         })
 
         window.addEventListener('mouseup', this.handleMouseUp)
+
+        ;(this.props.onMouseDown || emptyFn)(event)
     },
 
     isActive: function() {
