@@ -6,10 +6,6 @@ var normalize = require('react-style-normalizer')
 
 function emptyFn(){}
 
-function NAV(href){
-    window.location.href = href
-}
-
 module.exports = React.createClass({
 
     displayName: 'ReactButton',
@@ -17,6 +13,11 @@ module.exports = React.createClass({
     propTypes: {
         fn: React.PropTypes.func,
         onClick: React.PropTypes.func,
+
+        primary: React.PropTypes.bool,
+        disabled: React.PropTypes.bool,
+
+        href: React.PropTypes.string,
 
         style: React.PropTypes.object,
         activeStyle: React.PropTypes.object,
@@ -41,7 +42,7 @@ module.exports = React.createClass({
                 userSelect: 'none',
                 boxSizing : 'border-box',
                 padding  : 5,
-                margin   : 3,
+                margin   : 2,
                 border   : '1px solid rgb(218, 218, 218)',
                 cursor   : 'pointer',
                 textDecoration: 'none'
@@ -88,15 +89,7 @@ module.exports = React.createClass({
     render: function(){
         var props = this.prepareProps(this.props, this.state)
 
-        // var defaultAnchorFactory = React.DOM.a
-        // var anchorFactory        = props.anchorFactory || defaultAnchorFactory
-        // var anchor               = anchorFactory(props.anchorProps)
-
-        // if (anchor === undefined){
-        //     anchor = defaultAnchorFactory(props.anchorProps)
-        // }
-
-        return <a {...props} />
+        return (props.factory || React.DOM.a)(props)
     },
 
     prepareProps: function(thisProps, state) {
@@ -114,6 +107,12 @@ module.exports = React.createClass({
         props.mouseOver = props.overState == null? !!state.mouseOver: props.overState
         props.focused = !!state.focused
 
+        props['data-active'] = props.active
+        props['data-mouse-over'] = props.mouseOver
+        props['data-focused'] = props.focused
+        props['data-pressed'] = props.pressed
+        props['data-primary'] = props.primary
+
         props.style     = this.prepareStyle(props, state)
         props.className = this.prepareClassName(props, state)
 
@@ -130,8 +129,6 @@ module.exports = React.createClass({
 
         props.onFocus = this.handleFocus.bind(this, props)
         props.onBlur  = this.handleBlur.bind(this, props)
-
-        // props.anchorProps = this.prepareAnchorProps(props)
 
         return props
     },

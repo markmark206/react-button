@@ -41,4 +41,7 @@ function clicked(){}
  * focusedColor
  * disabledColor
 
+ * primary: Boolean
+ * disabled: Boolean
+
  * href: String - a href to navigate to when the button is clicked. Defaults to ''
