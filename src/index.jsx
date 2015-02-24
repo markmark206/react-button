@@ -17,45 +17,62 @@ module.exports = React.createClass({
     propTypes: {
         fn: React.PropTypes.func,
         onClick: React.PropTypes.func,
-        onMouseDown: React.PropTypes.func,
-        onMouseUp: React.PropTypes.func,
+
+        style: React.PropTypes.object,
+        activeStyle: React.PropTypes.object,
+        overStyle: React.PropTypes.object,
+        focusedStyle: React.PropTypes.object,
+        disabledStyle: React.PropTypes.object,
 
         className       : React.PropTypes.string,
         activeClassName : React.PropTypes.string,
         overClassName   : React.PropTypes.string,
-        focusedClassName: React.PropTypes.string
+        focusedClassName: React.PropTypes.string,
+        disabledClassName: React.PropTypes.string
     },
 
     getDefaultProps: function() {
         return {
             color: 'rgb(120, 120, 120)',
             overColor: 'white',
+
             defaultStyle: {
-                display  : 'inline-block',
-                boxSizing: 'border-box',
+                display   : 'inline-block',
+                userSelect: 'none',
+                boxSizing : 'border-box',
                 padding  : 5,
                 margin   : 3,
                 border   : '1px solid rgb(218, 218, 218)',
-                cursor   : 'pointer'
+                cursor   : 'pointer',
+                textDecoration: 'none'
             },
 
-            defaultOverStyle: {
+            defaultPrimaryStyle: {
                 background: 'rgb(103, 175, 233)'
             },
+
+            primaryColor: 'white',
+
+            defaultOverStyle: {
+                background: 'rgb(131, 190, 237)'
+            },
+
+            defaultPressedStyle: {
+                background: 'rgb(90, 152, 202)'
+            },
+
+            defaultDisabledPrimaryStyle: {
+                background: 'rgb(116, 144, 166)'
+            },
+
+            disabledPrimaryColor: 'rgb(190, 190, 190)',
+            pressedColor: 'white',
 
             defaultDisabledStyle: {
                 background: 'rgb(221, 221, 221)',
                 color: 'rgb(128, 128, 128)',
                 cursor: 'default'
             },
-            defaultDisabledAnchorStyle: {
-                cursor: 'default'
-            },
-
-            defaultAnchorStyle: {
-                textDecoration: 'none'
-            },
-
             href: ''
         }
     },
@@ -63,24 +80,23 @@ module.exports = React.createClass({
     getInitialState: function() {
         return {
             mouseOver: false,
-            active: false
+            active: false,
+            defaultPressed: this.props.defaultPressed
         }
     },
 
     render: function(){
-        var props         = this.prepareProps(this.props, this.state)
+        var props = this.prepareProps(this.props, this.state)
 
-        var defaultAnchorFactory = React.DOM.a
-        var anchorFactory        = props.anchorFactory || defaultAnchorFactory
-        var anchor               = anchorFactory(props.anchorProps)
+        // var defaultAnchorFactory = React.DOM.a
+        // var anchorFactory        = props.anchorFactory || defaultAnchorFactory
+        // var anchor               = anchorFactory(props.anchorProps)
 
-        if (anchor === undefined){
-            anchor = defaultAnchorFactory(props.anchorProps)
-        }
+        // if (anchor === undefined){
+        //     anchor = defaultAnchorFactory(props.anchorProps)
+        // }
 
-        return <div {...props}>
-            {anchor}
-        </div>
+        return <a {...props} />
     },
 
     prepareProps: function(thisProps, state) {
@@ -88,6 +104,11 @@ module.exports = React.createClass({
         var props = {}
 
         assign(props, thisProps)
+
+        var pressed = props.pressed != null? props.pressed: state.defaultPressed
+        if (pressed != null){
+            props.pressed = pressed
+        }
 
         props.active    = !!state.active
         props.mouseOver = props.overState == null? !!state.mouseOver: props.overState
@@ -97,9 +118,9 @@ module.exports = React.createClass({
         props.className = this.prepareClassName(props, state)
 
         props.onMouseEnter = this.handleMouseEnter.bind(this, props)
-        props.onMouseLeave  = this.handleMouseLeave.bind(this, props)
-        props.onMouseDown = this.handleMouseDown.bind(this, props)
-        props.onMouseUp   = this.handleMouseUp.bind(this, props)
+        props.onMouseLeave = this.handleMouseLeave.bind(this, props)
+        props.onMouseDown  = this.handleMouseDown.bind(this, props)
+        props.onMouseUp    = this.handleMouseUp.bind(this, props)
 
         var handleClick = this.handleClick.bind(this, props)
 
@@ -107,12 +128,16 @@ module.exports = React.createClass({
                             props.interceptClick.bind(this, handleClick):
                             handleClick
 
-        props.anchorProps = this.prepareAnchorProps(props)
+        props.onFocus = this.handleFocus.bind(this, props)
+        props.onBlur  = this.handleBlur.bind(this, props)
+
+        // props.anchorProps = this.prepareAnchorProps(props)
 
         return props
     },
 
     prepareAnchorProps: function(props) {
+        return;
         var anchorProps = {}
 
         assign(anchorProps, {
@@ -158,6 +183,36 @@ module.exports = React.createClass({
         return style
     },
 
+    getPressedColorStyle: function(props){
+        var style
+
+        if (props.pressed && props.pressedColor){
+            style = { color: props.pressedColor }
+        }
+
+        return style
+    },
+
+    getPrimaryColorStyle: function(props){
+        var style
+
+        if (props.primary && props.primaryColor){
+            style = { color: props.primaryColor }
+        }
+
+        return style
+    },
+
+    getDisabledPrimaryColorStyle: function(props){
+        var style
+
+        if (props.disabled && props.primary && props.disabledPrimaryColor){
+            style = { color: props.disabledPrimaryColor }
+        }
+
+        return style
+    },
+
     getDisabledColorStyle: function(props){
         var style
 
@@ -178,48 +233,34 @@ module.exports = React.createClass({
         return style
     },
 
-    prepareAnchorStyle: function(props) {
-        var style = assign({}, props.defaultAnchorStyle, this.getColorStyle(props), props.anchorStyle)
-
-        if (props.mouseOver){
-            assign(style, props.defaultOverAnchorStyle, this.getOverColorStyle(props), props.overAnchorStyle)
-        }
-
-        if (props.active){
-            assign(style, props.defaultActiveAnchorStyle, this.getActiveColorStyle(props), props.activeAnchorStyle)
-        }
-
-        if (props.focused){
-            assign(style, props.defaultFocusedAnchorStyle, this.getFocusedColorStyle(props), props.focusedAnchorStyle)
-        }
-
-        if (props.disabled){
-            assign(style, props.defaultDisabledAnchorStyle, this.getDisabledColorStyle(props), props.disabledAnchorStyle)
-        }
-
-        return style
-    },
-
     prepareClassName: function(props) {
 
         var className = props.className || ''
 
-        className += ' z-button'
+        if (props.disabled){
+            if (props.disabledClassName){
+                className += ' ' + props.disabledClassName
+            }
+        } else {
+            if (props.active && props.activeClassName){
+                className += ' ' + props.activeClassName
+            }
 
-        if (props.active){
-            className +=' z-active ' + (props.activeClassName || '')
-        }
+            if (props.pressed && props.pressedClassName){
+                className += ' ' + props.pressedClassName
+            }
 
-        if (props.mouseOver && props.overClassName){
-            className += ' ' + props.overClassName
-        }
+            if (props.primary && props.primaryClassName){
+                className += ' ' + props.primaryClassName
+            }
 
-        if (props.focused && props.focusedClassName){
-            className += ' ' + props.focusedClassName
-        }
+            if (props.mouseOver && props.overClassName){
+                className += ' ' + props.overClassName
+            }
 
-        if (props.disabled && props.disabledClassName){
-            className += ' ' + props.disabledClassName
+            if (props.focused && props.focusedClassName){
+                className += ' ' + props.focusedClassName
+            }
         }
 
         return className
@@ -230,36 +271,46 @@ module.exports = React.createClass({
 
         assign(style, props.defaultStyle, this.getColorStyle(props), props.style)
 
-        if (props.focused){
-            assign(style, props.defaultFocusedStyle, this.getFocusedColorStyle(props), props.focusedStyle)
-        }
-
-        if (props.mouseOver){
-            assign(style, props.defaultOverStyle, this.getOverColorStyle(props), props.overStyle)
-        }
-
-        if (props.active){
-            assign(style, props.defaultActiveStyle, this.getActiveColorStyle(props), props.activeStyle)
-        }
-
         if (props.disabled){
             assign(style, props.defaultDisabledStyle, this.getDisabledColorStyle(props), props.disabledStyle)
+
+            if (props.primary){
+                assign(style, props.defaultDisabledPrimaryStyle, this.getDisabledPrimaryColorStyle(props), props.disabledPrimaryStyle)
+            }
+        } else {
+            if (props.focused){
+                assign(style, props.defaultFocusedStyle, this.getFocusedColorStyle(props), props.focusedStyle)
+            }
+
+            if (props.pressed){
+                assign(style, props.defaultPressedStyle, this.getPressedColorStyle(props), props.pressedStyle)
+            }
+
+            if (props.primary){
+                assign(style, props.defaultPrimaryStyle, this.getPrimaryColorStyle(props), props.primaryStyle)
+            }
+
+            if (props.mouseOver){
+                assign(style, props.defaultOverStyle, this.getOverColorStyle(props), props.overStyle)
+            }
+
+            if (props.active){
+                assign(style, props.defaultActiveStyle, this.getActiveColorStyle(props), props.activeStyle)
+            }
         }
 
         return normalize(style)
-    },
-
-    navigate: function(props) {
-        if (props.href){
-            ;(props.navigate || NAV)(props.href)
-        }
     },
 
     isFocused: function() {
         return this.state.focused
     },
 
-    handleAnchorFocus: function(props, event) {
+    isActive: function() {
+        return !!this.state.active
+    },
+
+    handleFocus: function(props, event) {
         if (props.disabled){
             return
         }
@@ -269,7 +320,7 @@ module.exports = React.createClass({
         })
     },
 
-    handleAnchorBlur: function(props, event) {
+    handleBlur: function(props, event) {
         if (props.disabled){
             return
         }
@@ -279,19 +330,25 @@ module.exports = React.createClass({
         })
     },
 
-    handleAnchorClick: function(props, event) {
-        if (!props.href){
+    handleClick: function(props, event) {
+        if (!props.href || props.disabled){
             event.preventDefault()
         }
-    },
 
-    handleClick: function(props, event) {
         if (props.disabled){
             return
         }
 
-        if (props.href && (event.target && event.target.tagName !== 'A')){
-            this.navigate(props)
+        if (props.pressed != null){
+            var newPressed = !props.pressed
+
+            if (this.props.pressed  == null){
+                this.setState({
+                    pressed: newPressed
+                })
+            }
+
+            ;(this.props.onToggle || emptyFn)(newPressed, event)
         }
 
         ;(this.props.onClick || emptyFn)(event)
@@ -323,6 +380,10 @@ module.exports = React.createClass({
     },
 
     handleMouseUp: function(props, event) {
+        if (props.disabled){
+            return
+        }
+
         this.setState({
             active: false
         })
@@ -333,8 +394,6 @@ module.exports = React.createClass({
     },
 
     handleMouseDown: function(props, event) {
-
-        event.preventDefault()
 
         if (props.disabled){
             return
@@ -347,9 +406,5 @@ module.exports = React.createClass({
         window.addEventListener('mouseup', this.handleMouseUp)
 
         ;(this.props.onMouseDown || emptyFn)(event)
-    },
-
-    isActive: function() {
-        return !!this.state.active
     }
 })
