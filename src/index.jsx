@@ -124,8 +124,8 @@ module.exports = React.createClass({
         props.mouseOver = props.overState == null? !!state.mouseOver: props.overState
         props.focused = !!state.focused
 
-        props['data-active'] = props.active
-        props['data-mouse-over'] = props.mouseOver
+        props['data-active']  = props.active
+        props['data-over']    = props.mouseOver
         props['data-focused'] = props.focused
         props['data-pressed'] = props.pressed
         props['data-primary'] = props.primary

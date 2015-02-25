@@ -3,8 +3,6 @@
 var React = require('react')
 var Button = require('./src')
 
-require('./index.styl')
-
 var VALUE = 'xxx'
 
 var App = React.createClass({
