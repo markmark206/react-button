@@ -1,7 +1,7 @@
 'use strict';
 
-var React  = require('react')
-var assign = require('object-assign')
+var React     = require('react')
+var assign    = require('object-assign')
 var normalize = require('react-style-normalizer')
 
 function emptyFn(){}
@@ -41,38 +41,46 @@ module.exports = React.createClass({
                 display   : 'inline-block',
                 userSelect: 'none',
                 boxSizing : 'border-box',
+                textDecoration: 'none',
+                cursor   : 'pointer',
+
+                //theme properties
                 padding  : 5,
                 margin   : 2,
                 border   : '1px solid rgb(218, 218, 218)',
-                cursor   : 'pointer',
-                textDecoration: 'none',
                 color: 'rgb(120, 120, 120)',
             },
 
             defaultPrimaryStyle: {
+                //theme properties
                 background: 'rgb(103, 175, 233)',
                 color: 'white'
             },
 
             defaultOverStyle: {
+                //theme properties
                 background: 'rgb(131, 190, 237)',
                 color: 'white'
             },
 
             defaultPressedStyle: {
+                //theme properties
                 background: 'rgb(90, 152, 202)',
                 color: 'white'
             },
 
             defaultDisabledPrimaryStyle: {
+                //theme properties
                 background: 'rgb(116, 144, 166)',
                 color: 'rgb(190, 190, 190)'
             },
 
             defaultDisabledStyle: {
+                cursor: 'default',
+
+                //theme properties
                 background: 'rgb(221, 221, 221)',
-                color: 'rgb(128, 128, 128)',
-                cursor: 'default'
+                color: 'rgb(128, 128, 128)'
             },
             href: ''
         }
@@ -288,21 +296,27 @@ module.exports = React.createClass({
 
         } else {
             assign(style,
-                props.focused && props.defaultFocusedStyle,
-                props.primary && props.defaultPrimaryStyle,
+                //DEFAULTS
+                props.focused   && props.defaultFocusedStyle,
+                props.primary   && props.defaultPrimaryStyle,
                 props.mouseOver && props.defaultOverStyle,
+                props.pressed   && props.defaultPressedStyle,
+                props.active    && props.defaultActiveStyle,
+                //combinations
                 props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
-                props.pressed && props.defaultPressedStyle,
+                props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
                 props.mouseOver && props.pressed && props.defaultOverPressedStyle,
-                props.active && props.defaultActiveStyle,
 
-                props.focused && props.focusedStyle,
-                props.primary && props.primaryStyle,
+                //NON-DEFAULTS
+                props.focused   && props.focusedStyle,
+                props.primary   && props.primaryStyle,
                 props.mouseOver && props.overStyle,
+                props.pressed   && props.pressedStyle,
+                props.active    && props.activeStyle,
+                //combinations
                 props.mouseOver && props.primary && props.overPrimaryStyle,
-                props.pressed && props.pressedStyle,
-                props.mouseOver && props.pressed && props.overPressedStyle,
-                props.active && props.activeStyle
+                props.pressed   && props.primary && props.pressedPrimaryStyle,
+                props.mouseOver && props.pressed && props.overPressedStyle
             )
         }
 
