@@ -16,6 +16,8 @@ module.exports = React.createClass({
 
         primary: React.PropTypes.bool,
         disabled: React.PropTypes.bool,
+        pressed: React.PropTypes.bool,
+        defaultPressed: React.PropTypes.bool,
 
         href: React.PropTypes.string,
 
@@ -34,8 +36,6 @@ module.exports = React.createClass({
 
     getDefaultProps: function() {
         return {
-            color: 'rgb(120, 120, 120)',
-            overColor: 'white',
 
             defaultStyle: {
                 display   : 'inline-block',
@@ -45,29 +45,29 @@ module.exports = React.createClass({
                 margin   : 2,
                 border   : '1px solid rgb(218, 218, 218)',
                 cursor   : 'pointer',
-                textDecoration: 'none'
+                textDecoration: 'none',
+                color: 'rgb(120, 120, 120)',
             },
 
             defaultPrimaryStyle: {
-                background: 'rgb(103, 175, 233)'
+                background: 'rgb(103, 175, 233)',
+                color: 'white'
             },
 
-            primaryColor: 'white',
-
             defaultOverStyle: {
-                background: 'rgb(131, 190, 237)'
+                background: 'rgb(131, 190, 237)',
+                color: 'white'
             },
 
             defaultPressedStyle: {
-                background: 'rgb(90, 152, 202)'
+                background: 'rgb(90, 152, 202)',
+                color: 'white'
             },
 
             defaultDisabledPrimaryStyle: {
-                background: 'rgb(116, 144, 166)'
+                background: 'rgb(116, 144, 166)',
+                color: 'rgb(190, 190, 190)'
             },
-
-            disabledPrimaryColor: 'rgb(190, 190, 190)',
-            pressedColor: 'white',
 
             defaultDisabledStyle: {
                 background: 'rgb(221, 221, 221)',
@@ -86,6 +86,14 @@ module.exports = React.createClass({
         }
     },
 
+    isFocused: function() {
+        return this.state.focused
+    },
+
+    isActive: function() {
+        return !!this.state.active
+    },
+
     render: function(){
         var props = this.prepareProps(this.props, this.state)
 
@@ -99,6 +107,7 @@ module.exports = React.createClass({
         assign(props, thisProps)
 
         var pressed = props.pressed != null? props.pressed: state.defaultPressed
+
         if (pressed != null){
             props.pressed = pressed
         }
@@ -116,195 +125,20 @@ module.exports = React.createClass({
         props.style     = this.prepareStyle(props, state)
         props.className = this.prepareClassName(props, state)
 
-        props.onMouseEnter = this.handleMouseEnter.bind(this, props)
-        props.onMouseLeave = this.handleMouseLeave.bind(this, props)
-        props.onMouseDown  = this.handleMouseDown.bind(this, props)
-        props.onMouseUp    = this.handleMouseUp.bind(this, props)
-
         var handleClick = this.handleClick.bind(this, props)
 
         props.onClick = typeof props.interceptClick == 'function'?
                             props.interceptClick.bind(this, handleClick):
                             handleClick
 
-        props.onFocus = this.handleFocus.bind(this, props)
-        props.onBlur  = this.handleBlur.bind(this, props)
+        props.onFocus      = this.handleFocus.bind(this, props)
+        props.onBlur       = this.handleBlur.bind(this, props)
+        props.onMouseEnter = this.handleMouseEnter.bind(this, props)
+        props.onMouseLeave = this.handleMouseLeave.bind(this, props)
+        props.onMouseDown  = this.handleMouseDown.bind(this, props)
+        props.onMouseUp    = this.handleMouseUp.bind(this, props)
 
         return props
-    },
-
-    prepareAnchorProps: function(props) {
-        return;
-        var anchorProps = {}
-
-        assign(anchorProps, {
-            children   : props.children,
-            style      : this.prepareAnchorStyle(props),
-            href: props.href
-        })
-
-        anchorProps.onClick = this.handleAnchorClick.bind(this, props)
-        anchorProps.onFocus = this.handleAnchorFocus.bind(this, props)
-        anchorProps.onBlur  = this.handleAnchorBlur.bind(this, props)
-
-        return anchorProps
-    },
-
-    getActiveColorStyle: function(props){
-        var style
-
-        if (props.active && props.activeColor){
-            style = { color: props.activeColor }
-        }
-
-        return style
-    },
-
-    getOverColorStyle: function(props){
-        var style
-
-        if (props.mouseOver && props.overColor){
-            style = { color: props.overColor }
-        }
-
-        return style
-    },
-
-    getFocusedColorStyle: function(props){
-        var style
-
-        if (props.focused && props.focusedColor){
-            style = { color: props.focusedColor }
-        }
-
-        return style
-    },
-
-    getPressedColorStyle: function(props){
-        var style
-
-        if (props.pressed && props.pressedColor){
-            style = { color: props.pressedColor }
-        }
-
-        return style
-    },
-
-    getPrimaryColorStyle: function(props){
-        var style
-
-        if (props.primary && props.primaryColor){
-            style = { color: props.primaryColor }
-        }
-
-        return style
-    },
-
-    getDisabledPrimaryColorStyle: function(props){
-        var style
-
-        if (props.disabled && props.primary && props.disabledPrimaryColor){
-            style = { color: props.disabledPrimaryColor }
-        }
-
-        return style
-    },
-
-    getDisabledColorStyle: function(props){
-        var style
-
-        if (props.disabled && props.disabledColor){
-            style = { color: props.disabledColor }
-        }
-
-        return style
-    },
-
-    getColorStyle: function(props){
-        var style
-
-        if (props.color){
-            style = { color: props.color }
-        }
-
-        return style
-    },
-
-    prepareClassName: function(props) {
-
-        var className = props.className || ''
-
-        if (props.disabled){
-            if (props.disabledClassName){
-                className += ' ' + props.disabledClassName
-            }
-        } else {
-            if (props.active && props.activeClassName){
-                className += ' ' + props.activeClassName
-            }
-
-            if (props.pressed && props.pressedClassName){
-                className += ' ' + props.pressedClassName
-            }
-
-            if (props.primary && props.primaryClassName){
-                className += ' ' + props.primaryClassName
-            }
-
-            if (props.mouseOver && props.overClassName){
-                className += ' ' + props.overClassName
-            }
-
-            if (props.focused && props.focusedClassName){
-                className += ' ' + props.focusedClassName
-            }
-        }
-
-        return className
-    },
-
-    prepareStyle: function(props) {
-        var style = {}
-
-        assign(style, props.defaultStyle, this.getColorStyle(props), props.style)
-
-        if (props.disabled){
-            assign(style, props.defaultDisabledStyle, this.getDisabledColorStyle(props), props.disabledStyle)
-
-            if (props.primary){
-                assign(style, props.defaultDisabledPrimaryStyle, this.getDisabledPrimaryColorStyle(props), props.disabledPrimaryStyle)
-            }
-        } else {
-            if (props.focused){
-                assign(style, props.defaultFocusedStyle, this.getFocusedColorStyle(props), props.focusedStyle)
-            }
-
-            if (props.pressed){
-                assign(style, props.defaultPressedStyle, this.getPressedColorStyle(props), props.pressedStyle)
-            }
-
-            if (props.primary){
-                assign(style, props.defaultPrimaryStyle, this.getPrimaryColorStyle(props), props.primaryStyle)
-            }
-
-            if (props.mouseOver){
-                assign(style, props.defaultOverStyle, this.getOverColorStyle(props), props.overStyle)
-            }
-
-            if (props.active){
-                assign(style, props.defaultActiveStyle, this.getActiveColorStyle(props), props.activeStyle)
-            }
-        }
-
-        return normalize(style)
-    },
-
-    isFocused: function() {
-        return this.state.focused
-    },
-
-    isActive: function() {
-        return !!this.state.active
     },
 
     handleFocus: function(props, event) {
@@ -339,9 +173,9 @@ module.exports = React.createClass({
         if (props.pressed != null){
             var newPressed = !props.pressed
 
-            if (this.props.pressed  == null){
+            if (this.props.pressed == null){
                 this.setState({
-                    pressed: newPressed
+                    defaultPressed: newPressed
                 })
             }
 
@@ -403,5 +237,75 @@ module.exports = React.createClass({
         window.addEventListener('mouseup', this.handleMouseUp)
 
         ;(this.props.onMouseDown || emptyFn)(event)
+    },
+
+    prepareClassName: function(props) {
+
+        var className = props.className || ''
+
+        if (props.disabled){
+            if (props.disabledClassName){
+                className += ' ' + props.disabledClassName
+            }
+        } else {
+            if (props.active && props.activeClassName){
+                className += ' ' + props.activeClassName
+            }
+
+            if (props.pressed && props.pressedClassName){
+                className += ' ' + props.pressedClassName
+            }
+
+            if (props.mouseOver && props.overClassName){
+                className += ' ' + props.overClassName
+            }
+
+            if (props.focused && props.focusedClassName){
+                className += ' ' + props.focusedClassName
+            }
+        }
+
+        if (props.primary && props.primaryClassName){
+            className += ' ' + props.primaryClassName
+        }
+
+        return className
+    },
+
+    prepareStyle: function(props) {
+        var style = {}
+
+        assign(style, props.defaultStyle, props.style)
+
+        if (props.disabled){
+            assign(style,
+                props.defaultDisabledStyle,
+                props.primary && props.defaultDisabledPrimaryStyle,
+
+                props.disabledStyle,
+                props.primary && props.disabledPrimaryStyle
+            )
+
+        } else {
+            assign(style,
+                props.focused && props.defaultFocusedStyle,
+                props.primary && props.defaultPrimaryStyle,
+                props.mouseOver && props.defaultOverStyle,
+                props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
+                props.pressed && props.defaultPressedStyle,
+                props.mouseOver && props.pressed && props.defaultOverPressedStyle,
+                props.active && props.defaultActiveStyle,
+
+                props.focused && props.focusedStyle,
+                props.primary && props.primaryStyle,
+                props.mouseOver && props.overStyle,
+                props.mouseOver && props.primary && props.overPrimaryStyle,
+                props.pressed && props.pressedStyle,
+                props.mouseOver && props.pressed && props.overPressedStyle,
+                props.active && props.activeStyle
+            )
+        }
+
+        return normalize(style)
     }
 })

@@ -21,7 +21,7 @@ var App = React.createClass({
         }
 
         function clicked(e){
-            console.log('clicked', e)
+            // console.log('clicked', e)
         }
 
         // <Field placeholder="x" style={style} label='First Name' value={VALUE} onChange={this.onChange}/>
@@ -32,10 +32,11 @@ var App = React.createClass({
                     hello
                 </Button>
 
+                <Button onClick={clicked} activeStyle={{position:'relative', top: 1}}>Save as</Button>
                 <Button href="#test">world</Button>
                 <Button primary={true}>primary</Button>
                 <Button primary={true} disabled={true}>primary disabled</Button>
-                <Button pressed={true}>pressed</Button>
+                <Button defaultPressed={true}>toggle button</Button>
                 <Button disabled={true}>disabled</Button>
             </div>
         )
