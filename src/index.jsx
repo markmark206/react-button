@@ -6,40 +6,60 @@ var normalize = require('react-style-normalizer')
 
 function emptyFn(){}
 
+var ALIGN = (function(){
+    var MAP = {
+        left  : 'flex-start',
+        start : 'flex-start',
+        center: 'center',
+        right : 'flex-end',
+        end   : 'flex-end'
+    }
+
+    return function(value){
+        return MAP[value] || value
+    }
+})()
+
+var PropTypes = React.PropTypes
+
 module.exports = React.createClass({
 
     displayName: 'ReactButton',
 
     propTypes: {
-        fn: React.PropTypes.func,
-        onClick: React.PropTypes.func,
+        fn: PropTypes.func,
+        onClick: PropTypes.func,
 
-        primary: React.PropTypes.bool,
-        disabled: React.PropTypes.bool,
-        pressed: React.PropTypes.bool,
-        defaultPressed: React.PropTypes.bool,
+        primary: PropTypes.bool,
+        disabled: PropTypes.bool,
+        pressed: PropTypes.bool,
+        defaultPressed: PropTypes.bool,
 
-        href: React.PropTypes.string,
+        href: PropTypes.string,
+        align: PropTypes.string,
 
-        style: React.PropTypes.object,
-        activeStyle: React.PropTypes.object,
-        overStyle: React.PropTypes.object,
-        focusedStyle: React.PropTypes.object,
-        disabledStyle: React.PropTypes.object,
+        style: PropTypes.object,
+        activeStyle: PropTypes.object,
+        overStyle: PropTypes.object,
+        focusedStyle: PropTypes.object,
+        disabledStyle: PropTypes.object,
 
-        className       : React.PropTypes.string,
-        activeClassName : React.PropTypes.string,
-        overClassName   : React.PropTypes.string,
-        focusedClassName: React.PropTypes.string,
-        disabledClassName: React.PropTypes.string
+        className       : PropTypes.string,
+        activeClassName : PropTypes.string,
+        overClassName   : PropTypes.string,
+        focusedClassName: PropTypes.string,
+        disabledClassName: PropTypes.string
     },
 
     getDefaultProps: function() {
         return {
 
+            align: 'left',
+
             defaultStyle: {
-                display   : 'inline-block',
+                display   : 'inline-flex',
                 userSelect: 'none',
+                alignItems: 'center',
                 boxSizing : 'border-box',
                 textDecoration: 'none',
                 cursor   : 'pointer',
@@ -282,8 +302,11 @@ module.exports = React.createClass({
 
     prepareStyle: function(props) {
         var style = {}
+        var defaultStyle = assign({}, props.defaultStyle)
 
-        assign(style, props.defaultStyle, props.style)
+        defaultStyle.justifyContent = ALIGN(props.align)
+
+        assign(style, defaultStyle, props.style)
 
         if (props.disabled){
             assign(style,
