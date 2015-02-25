@@ -59,7 +59,7 @@ module.exports = React.createClass({
 
             defaultOverStyle: {
                 //theme properties
-                background: 'rgb(131, 190, 237)',
+                background: 'rgb(118, 181, 231)',
                 color: 'white'
             },
 
