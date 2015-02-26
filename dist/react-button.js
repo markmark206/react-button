@@ -70,6 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        right : 'flex-end',
 	        end   : 'flex-end'
 	    }
+
 	    return function(value){
 	        return MAP[value] || value
 	    }
@@ -108,6 +109,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    getDefaultProps: function() {
 	        return {
+	            isReactButton: true,
 
 	            align: 'left',
 
@@ -157,6 +159,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                background: 'rgb(221, 221, 221)',
 	                color: 'rgb(128, 128, 128)'
 	            },
+
+	            defaultLabelStyle: {
+	                display: 'inline-block'
+	            },
+	            ellipsisLabelStyle: {
+	                textOverflow: 'ellipsis',
+	                overflow: 'hidden',
+	                whiteSpace: 'nowrap'
+	            },
+	            ellipsis: true,
 	            href: ''
 	        }
 	    },
@@ -207,6 +219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        props.style     = this.prepareStyle(props, state)
 	        props.className = this.prepareClassName(props, state)
+	        props.children = this.prepareChildren(props)
 
 	        var handleClick = this.handleClick.bind(this, props)
 
@@ -232,6 +245,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setState({
 	            focused: true
 	        })
+
+	        ;(this.props.onFocus || emptyFn)(event)
 	    },
 
 	    handleBlur: function(props, event) {
@@ -242,6 +257,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setState({
 	            focused: false
 	        })
+
+	        ;(this.props.onBlur || emptyFn)(event)
 	    },
 
 	    handleClick: function(props, event) {
@@ -305,6 +322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        window.removeEventListener('mouseup', this.handleMouseUp)
 
 	        ;(this.props.onMouseUp || emptyFn)(event)
+	        ;(this.props.onDeactivate || emptyFn)(event)
 	    },
 
 	    handleMouseDown: function(props, event) {
@@ -320,6 +338,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        window.addEventListener('mouseup', this.handleMouseUp)
 
 	        ;(this.props.onMouseDown || emptyFn)(event)
+	        ;(this.props.onActivate || emptyFn)(event)
+	    },
+
+	    prepareChildren: function(props) {
+	        var children = props.children
+
+	        if (props.label){
+
+	            var labelProps = assign({}, props.defaultLabelProps, props.labelProps)
+	            var defaultLabelStyle = assign({}, props.defaultLabelStyle)
+
+	            if (props.ellipsis){
+	                assign(defaultLabelStyle, props.ellipsisLabelStyle)
+	            }
+
+	            var labelStyle = assign({}, defaultLabelStyle, labelProps.style, props.labelStyle)
+
+	            labelProps.style = labelStyle
+
+	            children = React.createElement("span", React.__spread({},  labelProps), 
+	                props.label
+	            )
+	        }
+
+	        return children
 	    },
 
 	    prepareClassName: function(props) {
@@ -526,8 +569,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var getStylePrefixed = __webpack_require__(9)
-	var properties       = __webpack_require__(10)
+	var getStylePrefixed = __webpack_require__(8)
+	var properties       = __webpack_require__(9)
 
 	module.exports = function(key, value){
 
@@ -565,7 +608,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var getCssPrefixedValue = __webpack_require__(8)
+	var getCssPrefixedValue = __webpack_require__(10)
 
 	module.exports = function(target){
 		target.plugins = target.plugins || [
@@ -601,8 +644,90 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var getPrefix     = __webpack_require__(11)
-	var forcePrefixed = __webpack_require__(12)
+	var toUpperFirst = __webpack_require__(11)
+	var getPrefix    = __webpack_require__(12)
+	var el           = __webpack_require__(13)
+
+	var MEMORY = {}
+	var STYLE = el.style
+
+	module.exports = function(key, value){
+
+	    var k = key// + ': ' + value
+
+	    if (MEMORY[k]){
+	        return MEMORY[k]
+	    }
+
+	    var prefix
+	    var prefixed
+
+	    if (!(key in STYLE)){//we have to prefix
+
+	        prefix = getPrefix('appearance')
+
+	        if (prefix){
+	            prefixed = prefix + toUpperFirst(key)
+
+	            if (prefixed in STYLE){
+	                key = prefixed
+	            }
+	        }
+	    }
+
+	    MEMORY[k] = key
+
+	    return key
+	}
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = {
+	  'alignItems': 1,
+	  'justifyContent': 1,
+	  'flex': 1,
+	  'flexFlow': 1,
+
+	  'userSelect': 1,
+	  'transform': 1,
+	  'transition': 1,
+	  'transformOrigin': 1,
+	  'transformStyle': 1,
+	  'transitionProperty': 1,
+	  'transitionDuration': 1,
+	  'transitionTimingFunction': 1,
+	  'transitionDelay': 1,
+	  'borderImage': 1,
+	  'borderImageSlice': 1,
+	  'boxShadow': 1,
+	  'backgroundClip': 1,
+	  'backfaceVisibility': 1,
+	  'perspective': 1,
+	  'perspectiveOrigin': 1,
+	  'animation': 1,
+	  'animationDuration': 1,
+	  'animationName': 1,
+	  'animationDelay': 1,
+	  'animationDirection': 1,
+	  'animationIterationCount': 1,
+	  'animationTimingFunction': 1,
+	  'animationPlayState': 1,
+	  'animationFillMode': 1,
+	  'appearance': 1
+	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var getPrefix     = __webpack_require__(12)
+	var forcePrefixed = __webpack_require__(14)
 	var el            = __webpack_require__(13)
 
 	var MEMORY = {}
@@ -646,94 +771,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var toUpperFirst = __webpack_require__(14)
-	var getPrefix    = __webpack_require__(11)
-	var el           = __webpack_require__(13)
-
-	var MEMORY = {}
-	var STYLE = el.style
-
-	module.exports = function(key, value){
-
-	    var k = key// + ': ' + value
-
-	    if (MEMORY[k]){
-	        return MEMORY[k]
-	    }
-
-	    var prefix
-	    var prefixed
-
-	    if (!(key in STYLE)){//we have to prefix
-
-	        prefix = getPrefix('appearance')
-
-	        if (prefix){
-	            prefixed = prefix + toUpperFirst(key)
-
-	            if (prefixed in STYLE){
-	                key = prefixed
-	            }
-	        }
-	    }
-
-	    MEMORY[k] = key
-
-	    return key
-	}
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = {
-	  'alignItems': 1,
-	  'justifyContent': 1,
-	  'flex': 1,
-	  'flexFlow': 1,
-
-	  'userSelect': 1,
-	  'transform': 1,
-	  'transition': 1,
-	  'transformOrigin': 1,
-	  'transformStyle': 1,
-	  'transitionProperty': 1,
-	  'transitionDuration': 1,
-	  'transitionTimingFunction': 1,
-	  'transitionDelay': 1,
-	  'borderImage': 1,
-	  'borderImageSlice': 1,
-	  'boxShadow': 1,
-	  'backgroundClip': 1,
-	  'backfaceVisibility': 1,
-	  'perspective': 1,
-	  'perspectiveOrigin': 1,
-	  'animation': 1,
-	  'animationDuration': 1,
-	  'animationName': 1,
-	  'animationDelay': 1,
-	  'animationDirection': 1,
-	  'animationIterationCount': 1,
-	  'animationTimingFunction': 1,
-	  'animationPlayState': 1,
-	  'animationFillMode': 1,
-	  'appearance': 1
-	}
-
-/***/ },
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(14)
+	module.exports = function(str){
+		return str?
+				str.charAt(0).toUpperCase() + str.slice(1):
+				''
+	}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var toUpperFirst = __webpack_require__(11)
 	var prefixes     = ["ms", "Moz", "Webkit", "O"]
 
 	var el = __webpack_require__(13)
@@ -762,35 +817,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var toUpperFirst = __webpack_require__(14)
-	var getPrefix    = __webpack_require__(11)
-	var properties   = __webpack_require__(10)
-
-	/**
-	 * Returns the given key prefixed, if the property is found in the prefixProps map.
-	 *
-	 * Does not test if the property supports the given value unprefixed.
-	 * If you need this, use './getPrefixed' instead
-	 */
-	module.exports = function(key, value){
-
-		if (!properties[key]){
-			return key
-		}
-
-		var prefix = getPrefix(key)
-
-		return prefix?
-					prefix + toUpperFirst(key):
-					key
-	}
-
-/***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -811,10 +837,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	module.exports = function(str){
-		return str?
-				str.charAt(0).toUpperCase() + str.slice(1):
-				''
+	var toUpperFirst = __webpack_require__(11)
+	var getPrefix    = __webpack_require__(12)
+	var properties   = __webpack_require__(9)
+
+	/**
+	 * Returns the given key prefixed, if the property is found in the prefixProps map.
+	 *
+	 * Does not test if the property supports the given value unprefixed.
+	 * If you need this, use './getPrefixed' instead
+	 */
+	module.exports = function(key, value){
+
+		if (!properties[key]){
+			return key
+		}
+
+		var prefix = getPrefix(key)
+
+		return prefix?
+					prefix + toUpperFirst(key):
+					key
 	}
 
 /***/ }

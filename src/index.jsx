@@ -53,6 +53,7 @@ module.exports = React.createClass({
 
     getDefaultProps: function() {
         return {
+            isReactButton: true,
 
             align: 'left',
 
@@ -102,6 +103,16 @@ module.exports = React.createClass({
                 background: 'rgb(221, 221, 221)',
                 color: 'rgb(128, 128, 128)'
             },
+
+            defaultLabelStyle: {
+                display: 'inline-block'
+            },
+            ellipsisLabelStyle: {
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap'
+            },
+            ellipsis: true,
             href: ''
         }
     },
@@ -152,6 +163,7 @@ module.exports = React.createClass({
 
         props.style     = this.prepareStyle(props, state)
         props.className = this.prepareClassName(props, state)
+        props.children = this.prepareChildren(props)
 
         var handleClick = this.handleClick.bind(this, props)
 
@@ -177,6 +189,8 @@ module.exports = React.createClass({
         this.setState({
             focused: true
         })
+
+        ;(this.props.onFocus || emptyFn)(event)
     },
 
     handleBlur: function(props, event) {
@@ -187,6 +201,8 @@ module.exports = React.createClass({
         this.setState({
             focused: false
         })
+
+        ;(this.props.onBlur || emptyFn)(event)
     },
 
     handleClick: function(props, event) {
@@ -250,6 +266,7 @@ module.exports = React.createClass({
         window.removeEventListener('mouseup', this.handleMouseUp)
 
         ;(this.props.onMouseUp || emptyFn)(event)
+        ;(this.props.onDeactivate || emptyFn)(event)
     },
 
     handleMouseDown: function(props, event) {
@@ -265,6 +282,31 @@ module.exports = React.createClass({
         window.addEventListener('mouseup', this.handleMouseUp)
 
         ;(this.props.onMouseDown || emptyFn)(event)
+        ;(this.props.onActivate || emptyFn)(event)
+    },
+
+    prepareChildren: function(props) {
+        var children = props.children
+
+        if (props.label){
+
+            var labelProps = assign({}, props.defaultLabelProps, props.labelProps)
+            var defaultLabelStyle = assign({}, props.defaultLabelStyle)
+
+            if (props.ellipsis){
+                assign(defaultLabelStyle, props.ellipsisLabelStyle)
+            }
+
+            var labelStyle = assign({}, defaultLabelStyle, labelProps.style, props.labelStyle)
+
+            labelProps.style = labelStyle
+
+            children = <span {...labelProps}>
+                {props.label}
+            </span>
+        }
+
+        return children
     },
 
     prepareClassName: function(props) {
