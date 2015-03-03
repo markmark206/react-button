@@ -20,11 +20,12 @@ var ALIGN = (function(){
     }
 })()
 
-var PropTypes = React.PropTypes
+var PropTypes    = React.PropTypes
+var DISPLAY_NAME = 'ReactButton'
 
 module.exports = React.createClass({
 
-    displayName: 'ReactButton',
+    displayName: DISPLAY_NAME,
 
     propTypes: {
         fn: PropTypes.func,
@@ -54,6 +55,7 @@ module.exports = React.createClass({
     getDefaultProps: function() {
         return {
             isReactButton: true,
+            'data-display-name': DISPLAY_NAME,
 
             align: 'left',
 
