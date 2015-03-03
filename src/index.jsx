@@ -64,8 +64,14 @@ module.exports = React.createClass({
                 boxSizing : 'border-box',
                 textDecoration: 'none',
                 cursor   : 'pointer',
+                overflow : 'hidden',
+                justifyContent: 'center',
+                fontFamily: 'Arial',
+                fontSize: '0.9em',
+
 
                 //theme properties
+                whiteSpace: 'nowrap',
                 padding  : 5,
                 margin   : 2,
                 border   : '1px solid rgb(218, 218, 218)',
@@ -306,6 +312,10 @@ module.exports = React.createClass({
             </span>
         }
 
+        if (typeof this.props.renderChildren === 'function'){
+            return this.props.renderChildren(children)
+        }
+
         return children
     },
 
@@ -346,6 +356,10 @@ module.exports = React.createClass({
         var style = {}
         var defaultStyle = assign({}, props.defaultStyle)
 
+        if (props.block){
+            defaultStyle.display = 'flex'
+        }
+
         defaultStyle.justifyContent = ALIGN(props.align)
 
         assign(style, defaultStyle, props.style)
@@ -353,12 +367,8 @@ module.exports = React.createClass({
         if (props.disabled){
             assign(style,
                 props.defaultDisabledStyle,
-                props.primary && props.defaultDisabledPrimaryStyle,
-
-                props.disabledStyle,
-                props.primary && props.disabledPrimaryStyle
+                props.primary && props.defaultDisabledPrimaryStyle
             )
-
         } else {
             assign(style,
                 //DEFAULTS
@@ -366,24 +376,47 @@ module.exports = React.createClass({
                 props.primary   && props.defaultPrimaryStyle,
                 props.mouseOver && props.defaultOverStyle,
                 props.pressed   && props.defaultPressedStyle,
-                props.active    && props.defaultActiveStyle,
+                props.active    && props.defaultActiveStyle
+            )
+
+            assign(style,
                 //combinations
                 props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
                 props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
-                props.mouseOver && props.pressed && props.defaultOverPressedStyle,
+                props.mouseOver && props.pressed && props.defaultOverPressedStyle
+            )
+        }
 
+        ;(props.onDefaultStylesApplied || emptyFn)(style)
+        ;(props.onDefaultStyleReady    || emptyFn)(style)
+
+        if (props.disabled){
+            assign(style,
+                props.disabledStyle,
+                props.primary && props.disabledPrimaryStyle
+            )
+
+        } else {
+            assign(style,
                 //NON-DEFAULTS
                 props.focused   && props.focusedStyle,
                 props.primary   && props.primaryStyle,
                 props.mouseOver && props.overStyle,
                 props.pressed   && props.pressedStyle,
-                props.active    && props.activeStyle,
+                props.active    && props.activeStyle
+            )
+
+            assign(style,
                 //combinations
                 props.mouseOver && props.primary && props.overPrimaryStyle,
                 props.pressed   && props.primary && props.pressedPrimaryStyle,
                 props.mouseOver && props.pressed && props.overPressedStyle
             )
+
         }
+
+        ;(props.onStylesApplied || emptyFn)(style)
+        ;(props.onStyleReady || emptyFn)(style)
 
         return normalize(style)
     }
