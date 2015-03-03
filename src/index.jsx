@@ -58,24 +58,25 @@ module.exports = React.createClass({
             align: 'left',
 
             defaultStyle: {
-                display   : 'inline-flex',
-                userSelect: 'none',
-                alignItems: 'center',
-                boxSizing : 'border-box',
-                textDecoration: 'none',
-                cursor   : 'pointer',
-                overflow : 'hidden',
-                justifyContent: 'center',
-                fontFamily: 'Arial',
-                fontSize: '0.9em',
+                boxSizing     : 'border-box',
 
+                display       : 'inline-flex',
+                alignItems    : 'center',
+                justifyContent: 'center',
+
+                userSelect    : 'none',
+                textDecoration: 'none',
+                cursor        : 'pointer',
+                overflow      : 'hidden',
 
                 //theme properties
+                //fontFamily: 'Arial',
+                fontSize  : '0.9em',
                 whiteSpace: 'nowrap',
-                padding  : 5,
-                margin   : 2,
-                border   : '1px solid rgb(218, 218, 218)',
-                color: 'rgb(120, 120, 120)',
+                padding   : 5,
+                margin    : 2,
+                border    : '1px solid rgb(218, 218, 218)',
+                color     : 'rgb(120, 120, 120)',
             },
 
             defaultPrimaryStyle: {
@@ -113,12 +114,15 @@ module.exports = React.createClass({
             defaultLabelStyle: {
                 display: 'inline-block'
             },
+
             ellipsisLabelStyle: {
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
                 whiteSpace: 'nowrap'
             },
+
             ellipsis: true,
+
             href: ''
         }
     },
@@ -362,7 +366,8 @@ module.exports = React.createClass({
 
         defaultStyle.justifyContent = ALIGN(props.align)
 
-        assign(style, defaultStyle, props.style)
+        //defaultStyle
+        assign(style, defaultStyle)
 
         if (props.disabled){
             assign(style,
@@ -390,6 +395,9 @@ module.exports = React.createClass({
         ;(props.onDefaultStylesApplied || emptyFn)(style)
         ;(props.onDefaultStyleReady    || emptyFn)(style)
 
+        //style
+        assign(style, props.style)
+
         if (props.disabled){
             assign(style,
                 props.disabledStyle,
@@ -416,7 +424,7 @@ module.exports = React.createClass({
         }
 
         ;(props.onStylesApplied || emptyFn)(style)
-        ;(props.onStyleReady || emptyFn)(style)
+        ;(props.onStyleReady    || emptyFn)(style)
 
         return normalize(style)
     }
