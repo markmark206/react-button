@@ -57,7 +57,9 @@ module.exports = React.createClass({
             isReactButton: true,
             'data-display-name': DISPLAY_NAME,
 
-            align: 'left',
+            align: 'center',
+
+            themed: true,
 
             defaultStyle: {
                 boxSizing     : 'border-box',
@@ -73,10 +75,13 @@ module.exports = React.createClass({
 
                 //theme properties
                 //fontFamily: 'Arial',
-                fontSize  : '0.9em',
+                // fontSize  : '0.9em',
                 whiteSpace: 'nowrap',
                 padding   : 5,
-                margin    : 2,
+                margin    : 2
+            },
+
+            defaultThemeStyle: {
                 border    : '1px solid rgb(218, 218, 218)',
                 color     : 'rgb(120, 120, 120)',
             },
@@ -362,6 +367,10 @@ module.exports = React.createClass({
         var style = {}
         var defaultStyle = assign({}, props.defaultStyle)
 
+        if (props.themed){
+            assign(defaultStyle, props.defaultThemeStyle)
+        }
+
         if (props.block){
             defaultStyle.display = 'flex'
         }
@@ -371,27 +380,30 @@ module.exports = React.createClass({
         //defaultStyle
         assign(style, defaultStyle)
 
-        if (props.disabled){
-            assign(style,
-                props.defaultDisabledStyle,
-                props.primary && props.defaultDisabledPrimaryStyle
-            )
-        } else {
-            assign(style,
-                //DEFAULTS
-                props.focused   && props.defaultFocusedStyle,
-                props.primary   && props.defaultPrimaryStyle,
-                props.mouseOver && props.defaultOverStyle,
-                props.pressed   && props.defaultPressedStyle,
-                props.active    && props.defaultActiveStyle
-            )
+        if (props.themed){
 
-            assign(style,
-                //combinations
-                props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
-                props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
-                props.mouseOver && props.pressed && props.defaultOverPressedStyle
-            )
+            if (props.disabled){
+                assign(style,
+                    props.defaultDisabledStyle,
+                    props.primary && props.defaultDisabledPrimaryStyle
+                )
+            } else {
+                assign(style,
+                    //DEFAULTS
+                    props.focused   && props.defaultFocusedStyle,
+                    props.primary   && props.defaultPrimaryStyle,
+                    props.mouseOver && props.defaultOverStyle,
+                    props.pressed   && props.defaultPressedStyle,
+                    props.active    && props.defaultActiveStyle
+                )
+
+                assign(style,
+                    //combinations
+                    props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
+                    props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
+                    props.mouseOver && props.pressed && props.defaultOverPressedStyle
+                )
+            }
         }
 
         ;(props.onDefaultStylesApplied || emptyFn)(style)
@@ -425,8 +437,8 @@ module.exports = React.createClass({
 
         }
 
-        ;(props.onStylesApplied || emptyFn)(style)
-        ;(props.onStyleReady    || emptyFn)(style)
+        ;(props.onStylesApplied || emptyFn)(style, props)
+        ;(props.onStyleReady    || emptyFn)(style, props)
 
         return normalize(style)
     }

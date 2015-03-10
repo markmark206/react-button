@@ -76,11 +76,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	})()
 
-	var PropTypes = React.PropTypes
+	var PropTypes    = React.PropTypes
+	var DISPLAY_NAME = 'ReactButton'
 
 	module.exports = React.createClass({
 
-	    displayName: 'ReactButton',
+	    displayName: DISPLAY_NAME,
 
 	    propTypes: {
 	        fn: PropTypes.func,
@@ -110,22 +111,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getDefaultProps: function() {
 	        return {
 	            isReactButton: true,
+	            'data-display-name': DISPLAY_NAME,
 
-	            align: 'left',
+	            align: 'center',
+
+	            themed: true,
 
 	            defaultStyle: {
-	                display   : 'inline-flex',
-	                userSelect: 'none',
-	                alignItems: 'center',
-	                boxSizing : 'border-box',
+	                boxSizing     : 'border-box',
+
+	                display       : 'inline-flex',
+	                alignItems    : 'center',
+	                justifyContent: 'center',
+
+	                userSelect    : 'none',
 	                textDecoration: 'none',
-	                cursor   : 'pointer',
+	                cursor        : 'pointer',
+	                overflow      : 'hidden',
 
 	                //theme properties
-	                padding  : 5,
-	                margin   : 2,
-	                border   : '1px solid rgb(218, 218, 218)',
-	                color: 'rgb(120, 120, 120)',
+	                //fontFamily: 'Arial',
+	                // fontSize  : '0.9em',
+	                whiteSpace: 'nowrap',
+	                padding   : 5,
+	                margin    : 2
+	            },
+
+	            defaultThemeStyle: {
+	                border    : '1px solid rgb(218, 218, 218)',
+	                color     : 'rgb(120, 120, 120)',
 	            },
 
 	            defaultPrimaryStyle: {
@@ -163,12 +177,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            defaultLabelStyle: {
 	                display: 'inline-block'
 	            },
+
 	            ellipsisLabelStyle: {
 	                textOverflow: 'ellipsis',
 	                overflow: 'hidden',
 	                whiteSpace: 'nowrap'
 	            },
+
 	            ellipsis: true,
+
 	            href: ''
 	        }
 	    },
@@ -362,6 +379,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            )
 	        }
 
+	        if (typeof this.props.renderChildren === 'function'){
+	            return this.props.renderChildren(children)
+	        }
+
 	        return children
 	    },
 
@@ -402,44 +423,78 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var style = {}
 	        var defaultStyle = assign({}, props.defaultStyle)
 
+	        if (props.themed){
+	            assign(defaultStyle, props.defaultThemeStyle)
+	        }
+
+	        if (props.block){
+	            defaultStyle.display = 'flex'
+	        }
+
 	        defaultStyle.justifyContent = ALIGN(props.align)
 
-	        assign(style, defaultStyle, props.style)
+	        //defaultStyle
+	        assign(style, defaultStyle)
+
+	        if (props.themed){
+
+	            if (props.disabled){
+	                assign(style,
+	                    props.defaultDisabledStyle,
+	                    props.primary && props.defaultDisabledPrimaryStyle
+	                )
+	            } else {
+	                assign(style,
+	                    //DEFAULTS
+	                    props.focused   && props.defaultFocusedStyle,
+	                    props.primary   && props.defaultPrimaryStyle,
+	                    props.mouseOver && props.defaultOverStyle,
+	                    props.pressed   && props.defaultPressedStyle,
+	                    props.active    && props.defaultActiveStyle
+	                )
+
+	                assign(style,
+	                    //combinations
+	                    props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
+	                    props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
+	                    props.mouseOver && props.pressed && props.defaultOverPressedStyle
+	                )
+	            }
+	        }
+
+	        ;(props.onDefaultStylesApplied || emptyFn)(style)
+	        ;(props.onDefaultStyleReady    || emptyFn)(style)
+
+	        //style
+	        assign(style, props.style)
 
 	        if (props.disabled){
 	            assign(style,
-	                props.defaultDisabledStyle,
-	                props.primary && props.defaultDisabledPrimaryStyle,
-
 	                props.disabledStyle,
 	                props.primary && props.disabledPrimaryStyle
 	            )
 
 	        } else {
 	            assign(style,
-	                //DEFAULTS
-	                props.focused   && props.defaultFocusedStyle,
-	                props.primary   && props.defaultPrimaryStyle,
-	                props.mouseOver && props.defaultOverStyle,
-	                props.pressed   && props.defaultPressedStyle,
-	                props.active    && props.defaultActiveStyle,
-	                //combinations
-	                props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
-	                props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
-	                props.mouseOver && props.pressed && props.defaultOverPressedStyle,
-
 	                //NON-DEFAULTS
 	                props.focused   && props.focusedStyle,
 	                props.primary   && props.primaryStyle,
 	                props.mouseOver && props.overStyle,
 	                props.pressed   && props.pressedStyle,
-	                props.active    && props.activeStyle,
+	                props.active    && props.activeStyle
+	            )
+
+	            assign(style,
 	                //combinations
 	                props.mouseOver && props.primary && props.overPrimaryStyle,
 	                props.pressed   && props.primary && props.pressedPrimaryStyle,
 	                props.mouseOver && props.pressed && props.overPressedStyle
 	            )
+
 	        }
+
+	        ;(props.onStylesApplied || emptyFn)(style, props)
+	        ;(props.onStyleReady    || emptyFn)(style, props)
 
 	        return normalize(style)
 	    }
