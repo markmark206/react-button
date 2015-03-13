@@ -30,7 +30,7 @@ var App = React.createClass({
                     hello
                 </Button>
 
-                <Button onClick={clicked} activeStyle={{position:'relative', top: 1}}>Save as</Button>
+                <Button type="big" overBigStyle={{color: 'red'}} onClick={clicked} activeStyle={{position:'relative', top: 1}}>Save as</Button>
                 <Button href="#test">world</Button>
                 <Button primary={true}>primary</Button>
                 <Button xprimary={true} disabled={true}>primary disabled</Button>
