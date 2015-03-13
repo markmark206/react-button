@@ -1,10 +1,16 @@
-'use strict';
+'use strict'
 
 var React     = require('react')
 var assign    = require('object-assign')
 var normalize = require('react-style-normalizer')
 
 function emptyFn(){}
+
+function toUpperFirst(s){
+    return s?
+            s.charAt(0).toUpperCase() + s.substring(1):
+            ''
+}
 
 var ALIGN = (function(){
     var MAP = {
@@ -22,6 +28,34 @@ var ALIGN = (function(){
 
 var PropTypes    = React.PropTypes
 var DISPLAY_NAME = 'ReactButton'
+
+/**
+ * We can have different button types:
+ *
+ * 1. default (type: '')
+ * 2. primary (type: 'primary')
+ *
+ * ... other user specified
+ *
+ * For each type, we have 3 special states a button can be in
+ *       1. pressed
+ *       2. focused
+ *       2. disabled
+ *       but also in a combination of these (excluding disabled).
+ *
+ * So we have
+ *
+ *  DEFAULT   pressed  focused  disabled
+ *      1.       *
+ *      2.               *
+ *      3.       *       *
+ *      4.                        *
+ *
+ * for each type 4 possible combinations.
+ *
+ * For the first 3 states we can have a variation: OVER and ACTIVE
+ *
+ */
 
 module.exports = React.createClass({
 
@@ -55,11 +89,10 @@ module.exports = React.createClass({
     getDefaultProps: function() {
         return {
             isReactButton: true,
+
             'data-display-name': DISPLAY_NAME,
 
             align: 'center',
-
-            themed: true,
 
             defaultStyle: {
                 boxSizing     : 'border-box',
@@ -81,41 +114,80 @@ module.exports = React.createClass({
                 margin    : 2
             },
 
-            defaultThemeStyle: {
-                border    : '1px solid rgb(218, 218, 218)',
-                color     : 'rgb(120, 120, 120)',
-            },
+            theme: {
 
-            defaultPrimaryStyle: {
-                //theme properties
-                background: 'rgb(103, 175, 233)',
-                color: 'white'
-            },
+                //default type
+                style: {
+                    border    : '1px solid rgb(46, 153, 235)',
+                    color     : 'rgb(84, 84, 84)',
+                },
+                        overStyle: {
+                            background: 'linear-gradient(to bottom, rgb(125, 191, 242) 0%, rgb(110, 184, 241) 50%, rgb(117, 188, 242) 100%)',
+                            color: 'white'
+                        },
 
-            defaultOverStyle: {
-                //theme properties
-                background: 'rgb(118, 181, 231)',
-                color: 'white'
-            },
+                        activeStyle: {
+                            //-6 lightness from overStyle
+                            background: ' linear-gradient(to bottom, rgb(106,182,240) 0%,rgb(91,175,239) 50%,rgb(96,178,240) 100%)',
+                            color: 'white'
+                        },
 
-            defaultPressedStyle: {
-                //theme properties
-                background: 'rgb(90, 152, 202)',
-                color: 'white'
-            },
+                    //disabled
+                    disabledStyle: {
+                        //theme properties
+                        background: 'rgb(221, 221, 221)',
+                        border: '1px solid rgb(147, 147, 147)',
+                        color: 'rgb(128, 128, 128)'
+                    },
 
-            defaultDisabledPrimaryStyle: {
-                //theme properties
-                background: 'rgb(116, 144, 166)',
-                color: 'rgb(190, 190, 190)'
+                    //pressed
+                    pressedStyle: {
+                        background: 'linear-gradient(to bottom, rgb(22,135,222) 0%,rgb(20,129,212) 50%,rgb(20,132,218) 100%)',
+                        color: 'white'
+                    },
+
+                        overPressedStyle: {
+                            // +14 lightness from pressed style
+                            background: 'linear-gradient(to bottom, rgb(48,153,234) 0%,rgb(36,148,234) 50%,rgb(41,151,235) 100%)',
+                        },
+
+                        activePressedStyle: {
+                            background: 'linear-gradient(to bottom, rgb(58,159,236) 0%,rgb(45,153,235) 50%,rgb(50,155,236) 100%)'
+                        },
+                    //focused
+                    //---NONE ----
+
+                primaryStyle: {
+                    background: 'linear-gradient(to bottom, #4ea9ee 0%,#41a2ed 50%,#46a5ee 100%)',
+                    color: 'white'
+                },
+
+                        overPrimaryStyle: {
+                            // + 10 lightness from primary
+                            background: 'linear-gradient(to bottom, rgb(96,178,240) 0%,rgb(83,171,239) 50%,rgb(88,174,240) 100%)'
+                        },
+
+                        activePrimaryStyle: {
+                            // -5 lightness from primary
+                            background: 'linear-gradient(to bottom, rgb(64,162,236) 0%,rgb(50,155,236) 50%,rgb(55,158,237) 100%)'
+                        },
+
+                    //disabled
+                    disabledPrimaryStyle: {
+                        //theme properties
+                        background: 'rgb(116, 144, 166)',
+                        color: 'rgb(190, 190, 190)'
+                    }
+
+                    //pressed
+                    //---NONE---
+
+                    //focused
+                    //---NONE---
             },
 
             defaultDisabledStyle: {
                 cursor: 'default',
-
-                //theme properties
-                background: 'rgb(221, 221, 221)',
-                color: 'rgb(128, 128, 128)'
             },
 
             defaultLabelStyle: {
@@ -156,11 +228,23 @@ module.exports = React.createClass({
         return (props.factory || React.DOM.a)(props)
     },
 
+    prepareType: function(props){
+        var type = ''
+
+        if (props.primary){
+            type = 'primary'
+        }
+
+        return props.type || type
+    },
+
     prepareProps: function(thisProps, state) {
 
         var props = {}
 
         assign(props, thisProps)
+
+        props.type = this.prepareType(props)
 
         var pressed = props.pressed != null? props.pressed: state.defaultPressed
 
@@ -168,19 +252,19 @@ module.exports = React.createClass({
             props.pressed = pressed
         }
 
-        props.active    = !!state.active
-        props.mouseOver = props.overState == null? !!state.mouseOver: props.overState
-        props.focused = !!state.focused
+        props.active    = props.activeState == null? !!state.active: props.activeState
+        props.over      = props.overState == null? !!state.mouseOver: props.overState
+        props.focused   = props.focusedState == null? !!state.focused: props.focusedState
 
         props['data-active']  = props.active
-        props['data-over']    = props.mouseOver
+        props['data-over']    = props.over
         props['data-focused'] = props.focused
         props['data-pressed'] = props.pressed
         props['data-primary'] = props.primary
 
         props.style     = this.prepareStyle(props, state)
         props.className = this.prepareClassName(props, state)
-        props.children = this.prepareChildren(props)
+        props.children  = this.prepareChildren(props)
 
         var handleClick = this.handleClick.bind(this, props)
 
@@ -347,7 +431,7 @@ module.exports = React.createClass({
                 className += ' ' + props.pressedClassName
             }
 
-            if (props.mouseOver && props.overClassName){
+            if (props.over && props.overClassName){
                 className += ' ' + props.overClassName
             }
 
@@ -356,20 +440,90 @@ module.exports = React.createClass({
             }
         }
 
-        if (props.primary && props.primaryClassName){
-            className += ' ' + props.primaryClassName
+        if (props.type){
+            className += ' type-' + props.type
         }
 
         return className
     },
 
-    prepareStyle: function(props) {
-        var style = {}
-        var defaultStyle = assign({}, props.defaultStyle)
+    prepareComputedStyleNames: function(props, type){
+        type = type || props.type
 
-        if (props.themed){
-            assign(defaultStyle, props.defaultThemeStyle)
+        var upperType = toUpperFirst(type)
+        var states    = ['focused', 'pressed']
+
+        var typeStyle = type? type + 'Style': 'style'
+
+        var names = [typeStyle] //style or primaryStyle
+
+        if (props.disabled){
+            names.push(type? type + 'DisabledStyle': 'disabledStyle') //push disabledStyle or primaryDisabledStyle
+
+            return names
         }
+
+        names.push.apply(names, states.map(function(state){
+            return props[state]?
+                    state + upperType + 'Style':
+                    null
+        }))
+
+        if (props.focused && props.pressed){
+            names.push('focusedPressed' + upperType + 'Style')
+        }
+
+        //names is something like ['style','focusedStyle','pressedStyle', 'focusedPressedStyle']
+        //names is something like ['primaryStyle','focusedPrimaryStyle','pressedPrimaryStyle', 'focusedPressedPrimaryStyle']
+        //
+        //now we add over and active styles
+
+        var overNames
+        if (props.over){
+            overNames = names.map(function(name){
+                return 'over' + toUpperFirst(name)
+            })
+        }
+
+        var activeNames
+        if (props.active){
+            activeNames = names.map(function(name){
+                return 'active' + toUpperFirst(name)
+            })
+        }
+
+        overNames   && names.push.apply(names, overNames)
+        activeNames && names.push.apply(names, activeNames)
+
+        return names
+    },
+
+    prepareStyle: function(props) {
+
+        var style = assign({}, this.prepareDefaultStyle(props))
+
+        var styleNames = this.prepareComputedStyleNames(props)
+        var theme      = props.theme
+
+        if (theme){
+            //apply theme first
+            styleNames.forEach(function(styleName){
+                assign(style, theme[styleName])
+            })
+        }
+
+        //then non-theme
+        styleNames.forEach(function(styleName){
+            assign(style, props[styleName])
+        })
+
+        ;(props.onStyleReady || emptyFn)(style, props)
+
+        return normalize(style)
+    },
+
+    prepareDefaultStyle: function(props){
+        var defaultStyle = assign({}, props.defaultStyle)
 
         if (props.block){
             defaultStyle.display = 'flex'
@@ -377,69 +531,10 @@ module.exports = React.createClass({
 
         defaultStyle.justifyContent = ALIGN(props.align)
 
-        //defaultStyle
-        assign(style, defaultStyle)
-
-        if (props.themed){
-
-            if (props.disabled){
-                assign(style,
-                    props.defaultDisabledStyle,
-                    props.primary && props.defaultDisabledPrimaryStyle
-                )
-            } else {
-                assign(style,
-                    //DEFAULTS
-                    props.focused   && props.defaultFocusedStyle,
-                    props.primary   && props.defaultPrimaryStyle,
-                    props.mouseOver && props.defaultOverStyle,
-                    props.pressed   && props.defaultPressedStyle,
-                    props.active    && props.defaultActiveStyle
-                )
-
-                assign(style,
-                    //combinations
-                    props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
-                    props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
-                    props.mouseOver && props.pressed && props.defaultOverPressedStyle
-                )
-            }
-        }
-
-        ;(props.onDefaultStylesApplied || emptyFn)(style)
-        ;(props.onDefaultStyleReady    || emptyFn)(style)
-
-        //style
-        assign(style, props.style)
-
         if (props.disabled){
-            assign(style,
-                props.disabledStyle,
-                props.primary && props.disabledPrimaryStyle
-            )
-
-        } else {
-            assign(style,
-                //NON-DEFAULTS
-                props.focused   && props.focusedStyle,
-                props.primary   && props.primaryStyle,
-                props.mouseOver && props.overStyle,
-                props.pressed   && props.pressedStyle,
-                props.active    && props.activeStyle
-            )
-
-            assign(style,
-                //combinations
-                props.mouseOver && props.primary && props.overPrimaryStyle,
-                props.pressed   && props.primary && props.pressedPrimaryStyle,
-                props.mouseOver && props.pressed && props.overPressedStyle
-            )
-
+            assign(defaultStyle, props.defaultDisabledStyle)
         }
 
-        ;(props.onStylesApplied || emptyFn)(style, props)
-        ;(props.onStyleReady    || emptyFn)(style, props)
-
-        return normalize(style)
+        return defaultStyle
     }
 })
