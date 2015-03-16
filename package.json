@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/radubrehar/react-button.git"
+    "url": "https://github.com/zippyui/react-button.git"
   },
   "keywords": [
     "button",
@@ -45,7 +45,7 @@
   "author": "Radu Brehar",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/radubrehar/react-button/issues"
+    "url": "https://github.com/zippyui/react-button/issues"
   },
-  "homepage": "https://github.com/radubrehar/react-button"
+  "homepage": "https://github.com/zippyui/react-button"
 }
