@@ -151,6 +151,15 @@ You can set all these props both on the theme object, or on the button itself.
  * align: String - where to align content inside button. Valid values are 'left', 'center', 'right'
  * 'block': Boolean - by default buttons are rendered with display `inline-flex`. Specify `block: true` if you want to use `display: flex` (or use style.display: 'flex').
 
+## Contributing
+
+```sh
+$ npm install
+$ npm run dev # to start webpack-dev-server
+$ npm run serve # to start http-server on port 9091
+```
+
+now navigate to [http://localhost:9091](localhost:9091)
 ## License
 
 #### MIT
