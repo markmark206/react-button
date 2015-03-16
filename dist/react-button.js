@@ -536,6 +536,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            })
 	        }
 
+	        ;(props.onThemeStyleReady || emptyFn)(style, props)
+
 	        //TODO apply default non-theme first to typed buttons
 	        //then non-theme
 	        styleNames.forEach(function(styleName){
@@ -767,8 +769,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(14)
-	var getPrefix    = __webpack_require__(11)
+	var toUpperFirst = __webpack_require__(11)
+	var getPrefix    = __webpack_require__(12)
 	var el           = __webpack_require__(13)
 
 	var MEMORY = {}
@@ -853,8 +855,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var getPrefix     = __webpack_require__(11)
-	var forcePrefixed = __webpack_require__(12)
+	var getPrefix     = __webpack_require__(12)
+	var forcePrefixed = __webpack_require__(14)
 	var el            = __webpack_require__(13)
 
 	var MEMORY = {}
@@ -907,7 +909,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(14)
+	module.exports = function(str){
+		return str?
+				str.charAt(0).toUpperCase() + str.slice(1):
+				''
+	}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var toUpperFirst = __webpack_require__(11)
 	var prefixes     = ["ms", "Moz", "Webkit", "O"]
 
 	var el = __webpack_require__(13)
@@ -936,35 +950,6 @@ return /******/ (function(modules) { // webpackBootstrap
 				return PREFIX = prefix
 			}
 		}
-	}
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var toUpperFirst = __webpack_require__(14)
-	var getPrefix    = __webpack_require__(11)
-	var properties   = __webpack_require__(9)
-
-	/**
-	 * Returns the given key prefixed, if the property is found in the prefixProps map.
-	 *
-	 * Does not test if the property supports the given value unprefixed.
-	 * If you need this, use './getPrefixed' instead
-	 */
-	module.exports = function(key, value){
-
-		if (!properties[key]){
-			return key
-		}
-
-		var prefix = getPrefix(key)
-
-		return prefix?
-					prefix + toUpperFirst(key):
-					key
 	}
 
 /***/ },
@@ -999,10 +984,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	module.exports = function(str){
-		return str?
-				str.charAt(0).toUpperCase() + str.slice(1):
-				''
+	var toUpperFirst = __webpack_require__(11)
+	var getPrefix    = __webpack_require__(12)
+	var properties   = __webpack_require__(9)
+
+	/**
+	 * Returns the given key prefixed, if the property is found in the prefixProps map.
+	 *
+	 * Does not test if the property supports the given value unprefixed.
+	 * If you need this, use './getPrefixed' instead
+	 */
+	module.exports = function(key, value){
+
+		if (!properties[key]){
+			return key
+		}
+
+		var prefix = getPrefix(key)
+
+		return prefix?
+					prefix + toUpperFirst(key):
+					key
 	}
 
 /***/ }

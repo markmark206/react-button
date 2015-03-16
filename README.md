@@ -150,6 +150,8 @@ You can set all these props both on the theme object, or on the button itself.
  * href: String - a href to navigate to when the button is clicked. Defaults to ''
  * align: String - where to align content inside button. Valid values are 'left', 'center', 'right'
  * 'block': Boolean - by default buttons are rendered with display `inline-flex`. Specify `block: true` if you want to use `display: flex` (or use style.display: 'flex').
+ * onStyleReady: Function - called after the style object is fully constructed
+ * onThemeStyleReady: Function - called after the theme styles have been applied to the style object (before `onStyleReady`)
 
 ## Contributing
 
@@ -160,6 +162,16 @@ $ npm run serve # to start http-server on port 9091
 ```
 
 now navigate to [http://localhost:9091](localhost:9091)
+
+## Changelog
+
+### v1.0.2
+
+  - add `onThemeStyleReady` prop
+
+### v1.0.1
+
+  - initial public release
 ## License
 
 #### MIT
