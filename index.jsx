@@ -5,6 +5,12 @@ var Button = require('./src')
 
 var VALUE = 'xxx'
 
+var theme = {
+    overStyle: {
+        background: 'blue'
+    }
+}
+
 var App = React.createClass({
 
     onChange: function(value){
@@ -30,11 +36,11 @@ var App = React.createClass({
                     hello
                 </Button>
 
-                <Button type="big" overBigStyle={{color: 'red'}} onClick={clicked} activeStyle={{position:'relative', top: 1}}>Save as</Button>
-                <Button href="#test">world</Button>
-                <Button primary={true}>primary</Button>
+                <Button type="big" overBigStyle={{color: 'red'}} onClick={clicked} >Save as</Button>
+                <Button theme={theme} overStyle={{background: 'red'}} href="#test">world</Button>
+                <Button theme='primary'>primary</Button>
                 <Button xprimary={true} disabled={true}>primary disabled</Button>
-                <Button defaultPressed={true}>toggle button</Button>
+                <Button defaultPressed={true} >toggle button</Button>
                 <Button disabled={true}>disabled</Button>
             </div>
         )

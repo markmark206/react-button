@@ -11,41 +11,41 @@
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-/******/
+
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-/******/
+
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-/******/
+
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
 /******/ 			loaded: false
 /******/ 		};
-/******/
+
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-/******/
+
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
-/******/
+
+
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-/******/
+
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
+
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-/******/
+
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
 /******/ })
@@ -54,13 +54,19 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/** @jsx React.DOM */'use strict';
+	/** @jsx React.DOM */'use strict'
 
 	var React     = __webpack_require__(1)
 	var assign    = __webpack_require__(2)
 	var normalize = __webpack_require__(3)
 
 	function emptyFn(){}
+
+	function toUpperFirst(s){
+	    return s?
+	            s.charAt(0).toUpperCase() + s.substring(1):
+	            ''
+	}
 
 	var ALIGN = (function(){
 	    var MAP = {
@@ -79,7 +85,83 @@ return /******/ (function(modules) { // webpackBootstrap
 	var PropTypes    = React.PropTypes
 	var DISPLAY_NAME = 'ReactButton'
 
-	module.exports = React.createClass({
+	var THEME = {
+	    'default': {
+	        //default type
+	        style: {
+	            border    : '1px solid rgb(46, 153, 235)',
+	            color     : 'rgb(84, 84, 84)',
+	        },
+	                overStyle: {
+	                    background: 'linear-gradient(to bottom, rgb(125, 191, 242) 0%, rgb(110, 184, 241) 50%, rgb(117, 188, 242) 100%)',
+	                    color: 'white'
+	                },
+
+	                activeStyle: {
+	                    //-6 lightness from overStyle
+	                    background: ' linear-gradient(to bottom, rgb(106,182,240) 0%,rgb(91,175,239) 50%,rgb(96,178,240) 100%)',
+	                    color: 'white'
+	                },
+
+	            //disabled
+	            disabledStyle: {
+	                //theme properties
+	                background: 'rgb(221, 221, 221)',
+	                border: '1px solid rgb(147, 147, 147)',
+	                color: 'rgb(128, 128, 128)'
+	            },
+
+	            //pressed
+	            pressedStyle: {
+	                background: 'linear-gradient(to bottom, rgb(22,135,222) 0%,rgb(20,129,212) 50%,rgb(20,132,218) 100%)',
+	                color: 'white'
+	            },
+
+	                overPressedStyle: {
+	                    // +14 lightness from pressed style
+	                    background: 'linear-gradient(to bottom, rgb(48,153,234) 0%,rgb(36,148,234) 50%,rgb(41,151,235) 100%)',
+	                },
+
+	                activePressedStyle: {
+	                    background: 'linear-gradient(to bottom, rgb(58,159,236) 0%,rgb(45,153,235) 50%,rgb(50,155,236) 100%)'
+	                },
+
+	            //focused
+	            focusedStyle: {}
+	            //---NONE ----
+	    },
+	    'primary': {
+	        style: {
+	            background: 'linear-gradient(to bottom, #4ea9ee 0%,#41a2ed 50%,#46a5ee 100%)',
+	            color: 'white'
+	        },
+
+	                overStyle: {
+	                    // + 10 lightness from primary
+	                    background: 'linear-gradient(to bottom, rgb(96,178,240) 0%,rgb(83,171,239) 50%,rgb(88,174,240) 100%)'
+	                },
+
+	                activeStyle: {
+	                    // -5 lightness from primary
+	                    background: 'linear-gradient(to bottom, rgb(64,162,236) 0%,rgb(50,155,236) 50%,rgb(55,158,237) 100%)'
+	                },
+
+	            //disabled
+	            disabledStyle: {
+	                //theme properties
+	                background: 'rgb(116, 144, 166)',
+	                color: 'rgb(190, 190, 190)'
+	            }
+
+	            //pressed
+	            //---NONE---
+
+	            //focused
+	            //---NONE---
+	    }
+	}
+
+	var ReactButton = React.createClass({
 
 	    displayName: DISPLAY_NAME,
 
@@ -96,10 +178,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        align: PropTypes.string,
 
 	        style: PropTypes.object,
-	        activeStyle: PropTypes.object,
-	        overStyle: PropTypes.object,
-	        focusedStyle: PropTypes.object,
-	        disabledStyle: PropTypes.object,
 
 	        className       : PropTypes.string,
 	        activeClassName : PropTypes.string,
@@ -111,11 +189,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getDefaultProps: function() {
 	        return {
 	            isReactButton: true,
+
 	            'data-display-name': DISPLAY_NAME,
 
 	            align: 'center',
-
-	            themed: true,
 
 	            defaultStyle: {
 	                boxSizing     : 'border-box',
@@ -137,41 +214,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                margin    : 2
 	            },
 
-	            defaultThemeStyle: {
-	                border    : '1px solid rgb(218, 218, 218)',
-	                color     : 'rgb(120, 120, 120)',
-	            },
-
-	            defaultPrimaryStyle: {
-	                //theme properties
-	                background: 'rgb(103, 175, 233)',
-	                color: 'white'
-	            },
-
-	            defaultOverStyle: {
-	                //theme properties
-	                background: 'rgb(118, 181, 231)',
-	                color: 'white'
-	            },
-
-	            defaultPressedStyle: {
-	                //theme properties
-	                background: 'rgb(90, 152, 202)',
-	                color: 'white'
-	            },
-
-	            defaultDisabledPrimaryStyle: {
-	                //theme properties
-	                background: 'rgb(116, 144, 166)',
-	                color: 'rgb(190, 190, 190)'
-	            },
-
 	            defaultDisabledStyle: {
 	                cursor: 'default',
-
-	                //theme properties
-	                background: 'rgb(221, 221, 221)',
-	                color: 'rgb(128, 128, 128)'
 	            },
 
 	            defaultLabelStyle: {
@@ -218,25 +262,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        assign(props, thisProps)
 
+	        props.theme = this.prepareTheme(props)
+
 	        var pressed = props.pressed != null? props.pressed: state.defaultPressed
 
 	        if (pressed != null){
 	            props.pressed = pressed
 	        }
 
-	        props.active    = !!state.active
-	        props.mouseOver = props.overState == null? !!state.mouseOver: props.overState
-	        props.focused = !!state.focused
+	        props.active    = props.activeState == null? !!state.active: props.activeState
+	        props.over      = props.overState == null? !!state.mouseOver: props.overState
+	        props.focused   = props.focusedState == null? !!state.focused: props.focusedState
 
 	        props['data-active']  = props.active
-	        props['data-over']    = props.mouseOver
+	        props['data-over']    = props.over
 	        props['data-focused'] = props.focused
 	        props['data-pressed'] = props.pressed
-	        props['data-primary'] = props.primary
+	        props['data-disabled'] = props.disabled
 
 	        props.style     = this.prepareStyle(props, state)
 	        props.className = this.prepareClassName(props, state)
-	        props.children = this.prepareChildren(props)
+	        props.children  = this.prepareChildren(props)
 
 	        var handleClick = this.handleClick.bind(this, props)
 
@@ -358,6 +404,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ;(this.props.onActivate || emptyFn)(event)
 	    },
 
+	    prepareTheme: function(props){
+	        var theme = props.theme
+
+	        if (typeof theme == 'string'){
+	            theme = THEME[theme]
+	        }
+
+	        return theme || THEME.default
+	    },
+
 	    prepareChildren: function(props) {
 	        var children = props.children
 
@@ -403,7 +459,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                className += ' ' + props.pressedClassName
 	            }
 
-	            if (props.mouseOver && props.overClassName){
+	            if (props.over && props.overClassName){
 	                className += ' ' + props.overClassName
 	            }
 
@@ -412,20 +468,87 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 
-	        if (props.primary && props.primaryClassName){
-	            className += ' ' + props.primaryClassName
-	        }
-
 	        return className
 	    },
 
-	    prepareStyle: function(props) {
-	        var style = {}
-	        var defaultStyle = assign({}, props.defaultStyle)
+	    prepareComputedStyleNames: function(props){
+	        var names = ['style']
 
-	        if (props.themed){
-	            assign(defaultStyle, props.defaultThemeStyle)
+	        if (props.disabled){
+	            names.push('disabledStyle')
+
+	            return names
 	        }
+
+	        if (props.focused){
+	            names.push('focusedStyle')
+	        }
+	        if (props.pressed){
+	            names.push('pressedStyle')
+	        }
+
+	        if (props.focused && props.pressed){
+	            names.push('focusedPressedStyle')
+	        }
+
+	        //names is something like ['style','focusedStyle','pressedStyle', 'focusedPressedStyle']
+	        //
+	        //now we add over and active styles
+
+	        var overNames
+	        if (props.over){
+	            overNames = names.map(function(name){
+	                return 'over' + toUpperFirst(name)
+	            })
+	        }
+
+	        var activeNames
+	        if (props.active){
+	            activeNames = names.map(function(name){
+	                return 'active' + toUpperFirst(name)
+	            })
+	        }
+
+	        overNames   && names.push.apply(names, overNames)
+	        activeNames && names.push.apply(names, activeNames)
+
+	        return names
+	    },
+
+	    prepareStyle: function(props) {
+
+	        var style = assign({}, this.prepareDefaultStyle(props))
+
+	        var styleNames = this.prepareComputedStyleNames(props)
+	        var theme      = props.theme
+
+	        if (theme){
+	            //apply default theme first
+	            if (theme != THEME.default){
+	                styleNames.forEach(function(styleName){
+	                    assign(style, THEME.default[styleName])
+	                })
+	            }
+
+	            //then apply theme
+	            styleNames.forEach(function(styleName){
+	                assign(style, theme[styleName])
+	            })
+	        }
+
+	        //TODO apply default non-theme first to typed buttons
+	        //then non-theme
+	        styleNames.forEach(function(styleName){
+	            assign(style, props[styleName])
+	        })
+
+	        ;(props.onStyleReady || emptyFn)(style, props)
+
+	        return normalize(style)
+	    },
+
+	    prepareDefaultStyle: function(props){
+	        var defaultStyle = assign({}, props.defaultStyle)
 
 	        if (props.block){
 	            defaultStyle.display = 'flex'
@@ -433,72 +556,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        defaultStyle.justifyContent = ALIGN(props.align)
 
-	        //defaultStyle
-	        assign(style, defaultStyle)
-
-	        if (props.themed){
-
-	            if (props.disabled){
-	                assign(style,
-	                    props.defaultDisabledStyle,
-	                    props.primary && props.defaultDisabledPrimaryStyle
-	                )
-	            } else {
-	                assign(style,
-	                    //DEFAULTS
-	                    props.focused   && props.defaultFocusedStyle,
-	                    props.primary   && props.defaultPrimaryStyle,
-	                    props.mouseOver && props.defaultOverStyle,
-	                    props.pressed   && props.defaultPressedStyle,
-	                    props.active    && props.defaultActiveStyle
-	                )
-
-	                assign(style,
-	                    //combinations
-	                    props.mouseOver && props.primary && props.defaultOverPrimaryStyle,
-	                    props.pressed   && props.primary && props.defaultPressedPrimaryStyle,
-	                    props.mouseOver && props.pressed && props.defaultOverPressedStyle
-	                )
-	            }
-	        }
-
-	        ;(props.onDefaultStylesApplied || emptyFn)(style)
-	        ;(props.onDefaultStyleReady    || emptyFn)(style)
-
-	        //style
-	        assign(style, props.style)
-
 	        if (props.disabled){
-	            assign(style,
-	                props.disabledStyle,
-	                props.primary && props.disabledPrimaryStyle
-	            )
-
-	        } else {
-	            assign(style,
-	                //NON-DEFAULTS
-	                props.focused   && props.focusedStyle,
-	                props.primary   && props.primaryStyle,
-	                props.mouseOver && props.overStyle,
-	                props.pressed   && props.pressedStyle,
-	                props.active    && props.activeStyle
-	            )
-
-	            assign(style,
-	                //combinations
-	                props.mouseOver && props.primary && props.overPrimaryStyle,
-	                props.pressed   && props.primary && props.pressedPrimaryStyle,
-	                props.mouseOver && props.pressed && props.overPressedStyle
-	            )
-
+	            assign(defaultStyle, props.defaultDisabledStyle)
 	        }
 
-	        ;(props.onStylesApplied || emptyFn)(style, props)
-	        ;(props.onStyleReady    || emptyFn)(style, props)
-
-	        return normalize(style)
+	        return defaultStyle
 	    }
 	})
+
+	ReactButton.theme = THEME
+
+	module.exports = ReactButton
 
 /***/ },
 /* 1 */
@@ -699,14 +767,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(11)
-	var getPrefix    = __webpack_require__(12)
+	var toUpperFirst = __webpack_require__(14)
+	var getPrefix    = __webpack_require__(11)
 	var el           = __webpack_require__(13)
 
 	var MEMORY = {}
-	var STYLE = el.style
+	var STYLE
+	var ELEMENT
 
 	module.exports = function(key, value){
+
+	    ELEMENT = ELEMENT || el()
+	    STYLE   = STYLE   || ELEMENT.style
 
 	    var k = key// + ': ' + value
 
@@ -781,14 +853,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var getPrefix     = __webpack_require__(12)
-	var forcePrefixed = __webpack_require__(14)
+	var getPrefix     = __webpack_require__(11)
+	var forcePrefixed = __webpack_require__(12)
 	var el            = __webpack_require__(13)
 
 	var MEMORY = {}
-	var STYLE = el.style
+	var STYLE
+	var ELEMENT
 
 	module.exports = function(key, value){
+
+	    ELEMENT = ELEMENT || el()
+	    STYLE   = STYLE   ||  ELEMENT.style
 
 	    var k = key + ': ' + value
 
@@ -810,10 +886,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            prefixedValue = '-' + prefix.toLowerCase() + '-' + value
 
 	            if (prefixed in STYLE){
-	                el.style[prefixed] = ''
-	                el.style[prefixed] = prefixedValue
+	                ELEMENT.style[prefixed] = ''
+	                ELEMENT.style[prefixed] = prefixedValue
 
-	                if (el.style[prefixed] !== ''){
+	                if (ELEMENT.style[prefixed] !== ''){
 	                    value = prefixedValue
 	                }
 	            }
@@ -831,23 +907,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	module.exports = function(str){
-		return str?
-				str.charAt(0).toUpperCase() + str.slice(1):
-				''
-	}
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var toUpperFirst = __webpack_require__(11)
+	var toUpperFirst = __webpack_require__(14)
 	var prefixes     = ["ms", "Moz", "Webkit", "O"]
 
 	var el = __webpack_require__(13)
 
+	var ELEMENT
 	var PREFIX
 
 	module.exports = function(key){
@@ -855,6 +920,8 @@ return /******/ (function(modules) { // webpackBootstrap
 		if (PREFIX){
 			return PREFIX
 		}
+
+		ELEMENT = ELEMENT || el()
 
 		var i = 0
 		var len = prefixes.length
@@ -865,35 +932,20 @@ return /******/ (function(modules) { // webpackBootstrap
 			prefix = prefixes[i]
 			tmp = prefix + toUpperFirst(key)
 
-			if (typeof el.style[tmp] != 'undefined'){
+			if (typeof ELEMENT.style[tmp] != 'undefined'){
 				return PREFIX = prefix
 			}
 		}
 	}
 
 /***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
-
-	var el
-
-	if(!!global.document){
-	  	el = global.document.createElement('div')
-	}
-
-	module.exports = el
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ },
-/* 14 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(11)
-	var getPrefix    = __webpack_require__(12)
+	var toUpperFirst = __webpack_require__(14)
+	var getPrefix    = __webpack_require__(11)
 	var properties   = __webpack_require__(9)
 
 	/**
@@ -915,6 +967,45 @@ return /******/ (function(modules) { // webpackBootstrap
 					key
 	}
 
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var el
+
+	module.exports = function(){
+
+		// console.log(global.document)
+		// console.log(window)
+		// console.log(document)
+
+		if(!el && !!global.document){
+		  	el = global.document.createElement('div')
+		}
+
+		if (!el){
+			el = {style: {}}
+		}
+
+		return el
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = function(str){
+		return str?
+				str.charAt(0).toUpperCase() + str.slice(1):
+				''
+	}
+
 /***/ }
 /******/ ])
 });
+;

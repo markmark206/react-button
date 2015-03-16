@@ -29,35 +29,83 @@ var ALIGN = (function(){
 var PropTypes    = React.PropTypes
 var DISPLAY_NAME = 'ReactButton'
 
-/**
- * We can have different button types:
- *
- * 1. default (type: '')
- * 2. primary (type: 'primary')
- *
- * ... other user specified
- *
- * For each type, we have 3 special states a button can be in
- *       1. pressed
- *       2. focused
- *       2. disabled
- *       but also in a combination of these (excluding disabled).
- *
- * So we have
- *
- *  DEFAULT   pressed  focused  disabled
- *      1.       *
- *      2.               *
- *      3.       *       *
- *      4.                        *
- *
- * for each type 4 possible combinations.
- *
- * For the first 3 states we can have a variation: OVER and ACTIVE
- *
- */
+var THEME = {
+    'default': {
+        //default type
+        style: {
+            border    : '1px solid rgb(46, 153, 235)',
+            color     : 'rgb(84, 84, 84)',
+        },
+                overStyle: {
+                    background: 'linear-gradient(to bottom, rgb(125, 191, 242) 0%, rgb(110, 184, 241) 50%, rgb(117, 188, 242) 100%)',
+                    color: 'white'
+                },
 
-module.exports = React.createClass({
+                activeStyle: {
+                    //-6 lightness from overStyle
+                    background: ' linear-gradient(to bottom, rgb(106,182,240) 0%,rgb(91,175,239) 50%,rgb(96,178,240) 100%)',
+                    color: 'white'
+                },
+
+            //disabled
+            disabledStyle: {
+                //theme properties
+                background: 'rgb(221, 221, 221)',
+                border: '1px solid rgb(147, 147, 147)',
+                color: 'rgb(128, 128, 128)'
+            },
+
+            //pressed
+            pressedStyle: {
+                background: 'linear-gradient(to bottom, rgb(22,135,222) 0%,rgb(20,129,212) 50%,rgb(20,132,218) 100%)',
+                color: 'white'
+            },
+
+                overPressedStyle: {
+                    // +14 lightness from pressed style
+                    background: 'linear-gradient(to bottom, rgb(48,153,234) 0%,rgb(36,148,234) 50%,rgb(41,151,235) 100%)',
+                },
+
+                activePressedStyle: {
+                    background: 'linear-gradient(to bottom, rgb(58,159,236) 0%,rgb(45,153,235) 50%,rgb(50,155,236) 100%)'
+                },
+
+            //focused
+            focusedStyle: {}
+            //---NONE ----
+    },
+    'primary': {
+        style: {
+            background: 'linear-gradient(to bottom, #4ea9ee 0%,#41a2ed 50%,#46a5ee 100%)',
+            color: 'white'
+        },
+
+                overStyle: {
+                    // + 10 lightness from primary
+                    background: 'linear-gradient(to bottom, rgb(96,178,240) 0%,rgb(83,171,239) 50%,rgb(88,174,240) 100%)'
+                },
+
+                activeStyle: {
+                    // -5 lightness from primary
+                    background: 'linear-gradient(to bottom, rgb(64,162,236) 0%,rgb(50,155,236) 50%,rgb(55,158,237) 100%)'
+                },
+
+            //disabled
+            disabledStyle: {
+                //theme properties
+                background: 'rgb(116, 144, 166)',
+                color: 'rgb(190, 190, 190)'
+            }
+
+            //pressed
+            //---NONE---
+
+            //focused
+            //---NONE---
+    }
+}
+
+var ReactButton = React.createClass({
 
     displayName: DISPLAY_NAME,
 
@@ -74,10 +122,6 @@ module.exports = React.createClass({
         align: PropTypes.string,
 
         style: PropTypes.object,
-        activeStyle: PropTypes.object,
-        overStyle: PropTypes.object,
-        focusedStyle: PropTypes.object,
-        disabledStyle: PropTypes.object,
 
         className       : PropTypes.string,
         activeClassName : PropTypes.string,
@@ -112,78 +156,6 @@ module.exports = React.createClass({
                 whiteSpace: 'nowrap',
                 padding   : 5,
                 margin    : 2
-            },
-
-            theme: {
-
-                //default type
-                style: {
-                    border    : '1px solid rgb(46, 153, 235)',
-                    color     : 'rgb(84, 84, 84)',
-                },
-                        overStyle: {
-                            background: 'linear-gradient(to bottom, rgb(125, 191, 242) 0%, rgb(110, 184, 241) 50%, rgb(117, 188, 242) 100%)',
-                            color: 'white'
-                        },
-
-                        activeStyle: {
-                            //-6 lightness from overStyle
-                            background: ' linear-gradient(to bottom, rgb(106,182,240) 0%,rgb(91,175,239) 50%,rgb(96,178,240) 100%)',
-                            color: 'white'
-                        },
-
-                    //disabled
-                    disabledStyle: {
-                        //theme properties
-                        background: 'rgb(221, 221, 221)',
-                        border: '1px solid rgb(147, 147, 147)',
-                        color: 'rgb(128, 128, 128)'
-                    },
-
-                    //pressed
-                    pressedStyle: {
-                        background: 'linear-gradient(to bottom, rgb(22,135,222) 0%,rgb(20,129,212) 50%,rgb(20,132,218) 100%)',
-                        color: 'white'
-                    },
-
-                        overPressedStyle: {
-                            // +14 lightness from pressed style
-                            background: 'linear-gradient(to bottom, rgb(48,153,234) 0%,rgb(36,148,234) 50%,rgb(41,151,235) 100%)',
-                        },
-
-                        activePressedStyle: {
-                            background: 'linear-gradient(to bottom, rgb(58,159,236) 0%,rgb(45,153,235) 50%,rgb(50,155,236) 100%)'
-                        },
-                    //focused
-                    //---NONE ----
-
-                primaryStyle: {
-                    background: 'linear-gradient(to bottom, #4ea9ee 0%,#41a2ed 50%,#46a5ee 100%)',
-                    color: 'white'
-                },
-
-                        overPrimaryStyle: {
-                            // + 10 lightness from primary
-                            background: 'linear-gradient(to bottom, rgb(96,178,240) 0%,rgb(83,171,239) 50%,rgb(88,174,240) 100%)'
-                        },
-
-                        activePrimaryStyle: {
-                            // -5 lightness from primary
-                            background: 'linear-gradient(to bottom, rgb(64,162,236) 0%,rgb(50,155,236) 50%,rgb(55,158,237) 100%)'
-                        },
-
-                    //disabled
-                    disabledPrimaryStyle: {
-                        //theme properties
-                        background: 'rgb(116, 144, 166)',
-                        color: 'rgb(190, 190, 190)'
-                    }
-
-                    //pressed
-                    //---NONE---
-
-                    //focused
-                    //---NONE---
             },
 
             defaultDisabledStyle: {
@@ -228,23 +200,13 @@ module.exports = React.createClass({
         return (props.factory || React.DOM.a)(props)
     },
 
-    prepareType: function(props){
-        var type = ''
-
-        if (props.primary){
-            type = 'primary'
-        }
-
-        return props.type || type
-    },
-
     prepareProps: function(thisProps, state) {
 
         var props = {}
 
         assign(props, thisProps)
 
-        props.type = this.prepareType(props)
+        props.theme = this.prepareTheme(props)
 
         var pressed = props.pressed != null? props.pressed: state.defaultPressed
 
@@ -260,7 +222,7 @@ module.exports = React.createClass({
         props['data-over']    = props.over
         props['data-focused'] = props.focused
         props['data-pressed'] = props.pressed
-        props['data-primary'] = props.primary
+        props['data-disabled'] = props.disabled
 
         props.style     = this.prepareStyle(props, state)
         props.className = this.prepareClassName(props, state)
@@ -386,6 +348,16 @@ module.exports = React.createClass({
         ;(this.props.onActivate || emptyFn)(event)
     },
 
+    prepareTheme: function(props){
+        var theme = props.theme
+
+        if (typeof theme == 'string'){
+            theme = THEME[theme]
+        }
+
+        return theme || THEME.default
+    },
+
     prepareChildren: function(props) {
         var children = props.children
 
@@ -440,41 +412,30 @@ module.exports = React.createClass({
             }
         }
 
-        if (props.type){
-            className += ' type-' + props.type
-        }
-
         return className
     },
 
-    prepareComputedStyleNames: function(props, type){
-        type = type || props.type
-
-        var upperType = toUpperFirst(type)
-        var states    = ['focused', 'pressed']
-
-        var typeStyle = type? type + 'Style': 'style'
-
-        var names = [typeStyle] //style or primaryStyle
+    prepareComputedStyleNames: function(props){
+        var names = ['style']
 
         if (props.disabled){
-            names.push(type? type + 'DisabledStyle': 'disabledStyle') //push disabledStyle or primaryDisabledStyle
+            names.push('disabledStyle')
 
             return names
         }
 
-        names.push.apply(names, states.map(function(state){
-            return props[state]?
-                    state + upperType + 'Style':
-                    null
-        }))
+        if (props.focused){
+            names.push('focusedStyle')
+        }
+        if (props.pressed){
+            names.push('pressedStyle')
+        }
 
         if (props.focused && props.pressed){
-            names.push('focusedPressed' + upperType + 'Style')
+            names.push('focusedPressedStyle')
         }
 
         //names is something like ['style','focusedStyle','pressedStyle', 'focusedPressedStyle']
-        //names is something like ['primaryStyle','focusedPrimaryStyle','pressedPrimaryStyle', 'focusedPressedPrimaryStyle']
         //
         //now we add over and active styles
 
@@ -506,12 +467,20 @@ module.exports = React.createClass({
         var theme      = props.theme
 
         if (theme){
-            //apply theme first
+            //apply default theme first
+            if (theme != THEME.default){
+                styleNames.forEach(function(styleName){
+                    assign(style, THEME.default[styleName])
+                })
+            }
+
+            //then apply theme
             styleNames.forEach(function(styleName){
                 assign(style, theme[styleName])
             })
         }
 
+        //TODO apply default non-theme first to typed buttons
         //then non-theme
         styleNames.forEach(function(styleName){
             assign(style, props[styleName])
@@ -538,3 +507,7 @@ module.exports = React.createClass({
         return defaultStyle
     }
 })
+
+ReactButton.theme = THEME
+
+module.exports = ReactButton
