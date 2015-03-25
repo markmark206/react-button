@@ -189,6 +189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getDefaultProps: function() {
 	        return {
 	            isReactButton: true,
+	            applyDefaultTheme: true,
 
 	            'data-display-name': DISPLAY_NAME,
 
@@ -408,10 +409,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var theme = props.theme
 
 	        if (typeof theme == 'string'){
-	            theme = THEME[theme]
+	            theme = THEME[theme]?
+	                        THEME[theme]:
+	                        undefined
 	        }
 
-	        return theme || THEME.default
+	        return theme === undefined?
+	                THEME.default:
+	                theme
 	    },
 
 	    prepareChildren: function(props) {
@@ -524,7 +529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (theme){
 	            //apply default theme first
-	            if (theme != THEME.default){
+	            if (props.applyDefaultTheme && theme != THEME.default){
 	                styleNames.forEach(function(styleName){
 	                    assign(style, THEME.default[styleName])
 	                })
@@ -769,8 +774,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(11)
-	var getPrefix    = __webpack_require__(12)
+	var toUpperFirst = __webpack_require__(14)
+	var getPrefix    = __webpack_require__(11)
 	var el           = __webpack_require__(13)
 
 	var MEMORY = {}
@@ -855,8 +860,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var getPrefix     = __webpack_require__(12)
-	var forcePrefixed = __webpack_require__(14)
+	var getPrefix     = __webpack_require__(11)
+	var forcePrefixed = __webpack_require__(12)
 	var el            = __webpack_require__(13)
 
 	var MEMORY = {}
@@ -909,19 +914,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	module.exports = function(str){
-		return str?
-				str.charAt(0).toUpperCase() + str.slice(1):
-				''
-	}
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var toUpperFirst = __webpack_require__(11)
+	var toUpperFirst = __webpack_require__(14)
 	var prefixes     = ["ms", "Moz", "Webkit", "O"]
 
 	var el = __webpack_require__(13)
@@ -950,6 +943,35 @@ return /******/ (function(modules) { // webpackBootstrap
 				return PREFIX = prefix
 			}
 		}
+	}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var toUpperFirst = __webpack_require__(14)
+	var getPrefix    = __webpack_require__(11)
+	var properties   = __webpack_require__(9)
+
+	/**
+	 * Returns the given key prefixed, if the property is found in the prefixProps map.
+	 *
+	 * Does not test if the property supports the given value unprefixed.
+	 * If you need this, use './getPrefixed' instead
+	 */
+	module.exports = function(key, value){
+
+		if (!properties[key]){
+			return key
+		}
+
+		var prefix = getPrefix(key)
+
+		return prefix?
+					prefix + toUpperFirst(key):
+					key
 	}
 
 /***/ },
@@ -984,27 +1006,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(11)
-	var getPrefix    = __webpack_require__(12)
-	var properties   = __webpack_require__(9)
-
-	/**
-	 * Returns the given key prefixed, if the property is found in the prefixProps map.
-	 *
-	 * Does not test if the property supports the given value unprefixed.
-	 * If you need this, use './getPrefixed' instead
-	 */
-	module.exports = function(key, value){
-
-		if (!properties[key]){
-			return key
-		}
-
-		var prefix = getPrefix(key)
-
-		return prefix?
-					prefix + toUpperFirst(key):
-					key
+	module.exports = function(str){
+		return str?
+				str.charAt(0).toUpperCase() + str.slice(1):
+				''
 	}
 
 /***/ }

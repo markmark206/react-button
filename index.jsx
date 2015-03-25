@@ -38,7 +38,7 @@ var App = React.createClass({
 
                 <Button type="big" overBigStyle={{color: 'red'}} onClick={clicked} >Save as</Button>
                 <Button theme={theme} overStyle={{background: 'red'}} href="#test">world</Button>
-                <Button theme='primary'>primary</Button>
+                <Button theme='defaultsss'>primary no theme</Button>
                 <Button xprimary={true} disabled={true}>primary disabled</Button>
                 <Button defaultPressed={true} >toggle button</Button>
                 <Button disabled={true}>disabled</Button>

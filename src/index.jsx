@@ -133,6 +133,7 @@ var ReactButton = React.createClass({
     getDefaultProps: function() {
         return {
             isReactButton: true,
+            applyDefaultTheme: true,
 
             'data-display-name': DISPLAY_NAME,
 
@@ -352,10 +353,14 @@ var ReactButton = React.createClass({
         var theme = props.theme
 
         if (typeof theme == 'string'){
-            theme = THEME[theme]
+            theme = THEME[theme]?
+                        THEME[theme]:
+                        undefined
         }
 
-        return theme || THEME.default
+        return theme === undefined?
+                THEME.default:
+                theme
     },
 
     prepareChildren: function(props) {
@@ -468,7 +473,7 @@ var ReactButton = React.createClass({
 
         if (theme){
             //apply default theme first
-            if (theme != THEME.default){
+            if (props.applyDefaultTheme && theme != THEME.default){
                 styleNames.forEach(function(styleName){
                     assign(style, THEME.default[styleName])
                 })
