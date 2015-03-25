@@ -161,7 +161,7 @@ $ npm run dev # to start webpack-dev-server
 $ npm run serve # to start http-server on port 9091
 ```
 
-now navigate to [http://localhost:9091](localhost:9091)
+now navigate to [localhost:9091](http://localhost:9091)
 
 ## Changelog
 
