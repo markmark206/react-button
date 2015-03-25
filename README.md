@@ -165,13 +165,7 @@ now navigate to [http://localhost:9091](localhost:9091)
 
 ## Changelog
 
-### v1.0.2
-
-  - add `onThemeStyleReady` prop
-
-### v1.0.1
-
-  - initial public release
+See [Changelog](./CHANGELOG.md)
 ## License
 
 #### MIT

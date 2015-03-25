@@ -7,6 +7,10 @@ React Button
 
  * made falsy or not found theme not fallback to default theme
 
+## v1.0.2
+
+   - add `onThemeStyleReady` prop
+
 ## 1.0.0
 
  * initial release
