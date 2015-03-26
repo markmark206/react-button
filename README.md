@@ -1,7 +1,7 @@
 react-button
 ============
 
-React Button
+> A carefully crafted button for React
 
 ## Install
 
@@ -65,7 +65,7 @@ var theme = {
 Or, you can specify a theme as string: 'default' or 'primary'. Those are the only two themes that come built into the `ReactButton`. You can get the styles for these:
 
 ```jsx
-var theme = require('react-button'.theme
+var theme = require('react-button').theme
 theme.gray = {
 	style: {...},
 	overStyle: {...}
@@ -166,6 +166,7 @@ now navigate to [localhost:9091](http://localhost:9091)
 ## Changelog
 
 See [Changelog](./CHANGELOG.md)
+
 ## License
 
 #### MIT
