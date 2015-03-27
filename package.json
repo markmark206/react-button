@@ -42,7 +42,10 @@
     "react",
     "ui"
   ],
-  "author": "Radu Brehar",
+  "contributors": [
+    "Radu Brehar <radu@evanghelic.ro>"
+  ],
+  "author": "ZippyUI <contact@zippyui.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/zippyui/react-button/issues"
