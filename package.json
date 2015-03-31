@@ -42,9 +42,6 @@
     "react",
     "ui"
   ],
-  "contributors": [
-    "Radu Brehar <radu@evanghelic.ro>"
-  ],
   "author": "ZippyUI <contact@zippyui.com>",
   "license": "MIT",
   "bugs": {
