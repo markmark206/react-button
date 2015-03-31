@@ -9,6 +9,10 @@ react-button
 $ npm install react-button --save
 ```
 
+## Changelog
+
+See [Changelog](./CHANGELOG.md)
+
 ## Usage
 
 ```jsx
@@ -65,12 +69,12 @@ var theme = {
 Or, you can specify a theme as string: 'default' or 'primary'. Those are the only two themes that come built into the `ReactButton`. You can get the styles for these:
 
 ```jsx
-var theme = require('react-button').theme
-theme.gray = {
+var themes = require('react-button').themes
+themes.gray = {
 	style: {...},
 	overStyle: {...}
 }
-<Button theme={theme.primary} />
+<Button theme={themes.primary} />
 
 //since 'gray' is added to the exported theme object,
 //you can use it as a named theme
@@ -97,13 +101,15 @@ If you specify `overStyle`, `activeStyle`, `pressedStyle`, `overPressedStyle` et
 
 #### Theming props
 
- * theme: Object/String - a theme object (or a falsy value, if you don't want to render a themed button) or a string which should be a key from the exported `ReactButton.theme`
+ * theme: Object/String - a theme object (or a falsy value, if you don't want to render a themed button) or a string which should be a key from the exported `Button.themes`
+ * themes: Object - another object where to look for themes. This defaults to `Button.themes`, but it can be modified using this property
 
- If you want to modify the default look for all buttons, just modify `Button.theme.default`
+ If you want to modify the default look for all buttons, just modify `Button.themes.default`
 
 ```jsx
 var Button = require('react-button')
-var themes = Button.theme
+
+var themes = Button.themes
 
 themes.default.style     = { ... }
 themes.default.overStyle = { ... }
@@ -162,10 +168,6 @@ $ npm run serve # to start http-server on port 9091
 ```
 
 now navigate to [localhost:9091](http://localhost:9091)
-
-## Changelog
-
-See [Changelog](./CHANGELOG.md)
 
 ## License
 

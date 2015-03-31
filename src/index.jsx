@@ -134,6 +134,7 @@ var ReactButton = React.createClass({
         return {
             isReactButton: true,
             applyDefaultTheme: true,
+            buttonStates: ['focused', 'pressed'],
 
             'data-display-name': DISPLAY_NAME,
 
@@ -350,16 +351,17 @@ var ReactButton = React.createClass({
     },
 
     prepareTheme: function(props){
-        var theme = props.theme
+        var theme  = props.theme
+        var THEMES = props.themes = props.themes || this.constructor.theme || THEME
 
         if (typeof theme == 'string'){
-            theme = THEME[theme]?
-                        THEME[theme]:
+            theme = THEMES[theme]?
+                        THEMES[theme]:
                         null
         }
 
         return theme == null?
-                THEME.default:
+                THEMES.default:
                 theme
     },
 
@@ -441,8 +443,16 @@ var ReactButton = React.createClass({
             names.push('pressedStyle')
         }
 
+        if (typeof props.addStateStyle == 'function'){
+            props.addStateStyle(names)
+        }
+
         if (props.focused && props.pressed){
             names.push('focusedPressedStyle')
+        }
+
+        if (typeof props.addCombinedStateStyle == 'function'){
+            props.addCombinedStateStyle(names)
         }
 
         //names is something like ['style','focusedStyle','pressedStyle', 'focusedPressedStyle']
@@ -475,12 +485,13 @@ var ReactButton = React.createClass({
 
         var styleNames = this.prepareComputedStyleNames(props)
         var theme      = props.theme
+        var THEMES     = props.themes
 
         if (theme){
             //apply default theme first
-            if (props.applyDefaultTheme && theme != THEME.default){
+            if (props.applyDefaultTheme && theme != THEMES.default){
                 styleNames.forEach(function(styleName){
-                    assign(style, THEME.default[styleName])
+                    assign(style, THEMES.default[styleName])
                 })
             }
 
@@ -520,6 +531,6 @@ var ReactButton = React.createClass({
     }
 })
 
-ReactButton.theme = THEME
+ReactButton.themes = THEME
 
 module.exports = ReactButton
