@@ -489,7 +489,7 @@ var ReactButton = React.createClass({
 
         if (theme){
             //apply default theme first
-            if (props.applyDefaultTheme && theme != THEMES.default){
+            if (props.applyDefaultTheme && THEMES.default && theme != THEMES.default){
                 styleNames.forEach(function(styleName){
                     assign(style, THEMES.default[styleName])
                 })

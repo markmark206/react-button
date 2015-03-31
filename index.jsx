@@ -28,6 +28,14 @@ var App = React.createClass({
             console.log('clicked', e)
         }
 
+        var t = {
+            blue: {
+                style: {
+                    color: 'magenta'
+                }
+            }
+        }
+
         // <Field placeholder="x" style={style} label='First Name' value={VALUE} onChange={this.onChange}/>
 
         return (
@@ -37,7 +45,7 @@ var App = React.createClass({
                 </Button>
 
                 <Button type="big" overBigStyle={{color: 'red'}} onClick={clicked} >Save as</Button>
-                <Button theme={theme} overStyle={{background: 'red'}} href="#test">world</Button>
+                <Button theme="blue" themes={t} theoverStyle={{background: 'red'}} href="#test">world</Button>
                 <Button theme='defaultsss'>primary no theme</Button>
                 <Button xprimary={true} disabled={true}>primary disabled</Button>
                 <Button defaultPressed={true} >toggle button</Button>
