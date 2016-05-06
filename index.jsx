@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react')
+var ReactDOM = require('react-dom')
 var Button = require('./src')
 
 var VALUE = 'xxx'
@@ -55,4 +56,4 @@ var App = React.createClass({
     }
 })
 
-React.render(<App />, document.getElementById('content'))
+ReactDOM.render(<App />, document.getElementById('content'))
